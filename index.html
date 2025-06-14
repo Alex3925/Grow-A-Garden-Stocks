@@ -9,8 +9,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
-      background: linear-gradient(to bottom right, #f0f9f4, #e0f2e9, #e6f3f5);
-      font-family: Arial, sans-serif;
+      background: url('BACKGROUND_URL') no-repeat center center fixed;
+      background-size: cover;
       min-height: 100vh;
     }
     .dropdown {
@@ -37,261 +37,34 @@
       transform: translateY(-5px);
       box-shadow: 0 8px 16px rgba(0,0,0,0.2);
     }
-    .category-header {
-      background-color: #c8e6c9;
-      padding: 0.5rem;
-      border-radius: 0.5rem;
-    }
-    .category-content.gear {
-      background: linear-gradient(to bottom right, #fef2f2, #fee2e2);
-      padding: 1rem;
-      border-radius: 0.5rem;
-      border: 1px solid #fecaca;
-    }
-    .category-content.seeds {
-      background: linear-gradient(to bottom right, #f0fdf4, #dcfce7);
-      padding: 1rem;
-      border-radius: 0.5rem;
-      border: 1px solid #bbf7d0;
-    }
-    .category-content.eggs {
-      background: linear-gradient(to bottom right, #fefcbf, #fef9c3);
-      padding: 1rem;
-      border-radius: 0.5rem;
-      border: 1px solid #fde047;
-    }
-    .category-content.honey {
-      background: linear-gradient(to bottom right, #fef3c7, #fde68a);
-      padding: 1rem;
-      border-radius: 0.5rem;
-      border: 1px solid #fcd34d;
-    }
-    .category-content.cosmetics {
-      background: linear-gradient(to bottom right, #fce7f3, #f9a8d4);
-      padding: 1rem;
-      border-radius: 0.5rem;
-      border: 1px solid #f472b6;
-    }
-    .item {
-      background-color: rgba(255, 255, 255, 0.8);
-      backdrop-filter: blur(5px);
-      padding: 0.75rem;
-      border: 1px solid #d1d5db;
-      border-radius: 0.5rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin: 0.25rem 0;
-      transition: all 0.2s ease;
-    }
-    .item:hover {
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      transform: scale(1.02);
-    }
-    .low-stock {
-      color: #dc2626;
-      font-weight: bold;
-    }
-    .weather-item {
-      background-color: #fff;
-      padding: 0.5rem;
-      margin: 0.25rem;
-      border-radius: 0.25rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    header {
-      background: linear-gradient(to right, #2e7d32, #4caf50);
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
-    .restock {
-      background: linear-gradient(to bottom right, #ffedd5, #fed7aa);
-      padding: 1rem;
-      border-radius: 0.5rem;
-      border: 1px solid #fdba74;
-      margin-bottom: 1rem;
-    }
-    .search-bar {
-      background-color: #fff;
-      padding: 1rem;
-      border-radius: 0.5rem;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-      border: 1px solid #d1d5db;
-    }
   </style>
 </head>
-<body class="p-4">
-  <header class="bg-gradient-to-r from-emerald-600 to-green-700 shadow-lg mb-6">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center">
-      <div class="flex items-center space-x-3">
-        <div class="bg-white/20 rounded-lg p-2">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sprout h-8 w-8 text-white">
-            <path d="M7 20h10"></path>
-            <path d="M10 20c5.5-2.5.8-6.4 3-10"></path>
-            <path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"></path>
-            <path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"></path>
-          </svg>
-        </div>
-        <div>
-          <h1 class="text-2xl font-bold text-white">Grow A Garden</h1>
-          <p class="text-emerald-100 text-sm">Live Feed</p>
-        </div>
-      </div>
-      <div class="text-right">
-        <p class="text-white text-sm font-medium">Created by Alex</p>
-        <a href="https://www.facebook.com/100085861488156" target="_blank" rel="noopener noreferrer" class="text-emerald-200 hover:text-white text-xs flex items-center space-x-1 transition-colors">
-          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link h-3 w-3">
-            <path d="M15 3h6v6"></path>
-            <path d="M10 14 21 3"></path>
-            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-          </svg>
-          <span>Facebook Profile</span>
-        </a>
-      </div>
-    </div>
-  </header>
+<body>
+  <h1 class="text-4xl font-bold text-center my-8 text-green-700 animate-fadeIn">Grow A Garden Live Feed 🌻</h1>
 
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-      <div class="lg:col-span-1">
-        <div class="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl p-6 shadow-lg border border-blue-200 weather-box">
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold text-gray-800 flex items-center space-x-2">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sun h-8 w-8 text-yellow-500">
-                <circle cx="12" cy="12" r="4"></circle>
-                <path d="M12 2v2"></path>
-                <path d="M12 20v2"></path>
-                <path d="m4.93 4.93 1.41 1.41"></path>
-                <path d="m17.66 17.66 1.41 1.41"></path>
-                <path d="M2 12h2"></path>
-                <path d="M20 12h2"></path>
-                <path d="m6.34 17.66-1.41 1.41"></path>
-                <path d="m19.07 4.93-1.41 1.41"></path>
-              </svg>
-              <span>Current Weather</span>
-            </h3>
-            <span class="text-2xl">☀️</span>
-          </div>
-          <div id="weather-content" class="text-lg font-medium text-gray-800 space-y-3">
-            <!-- Dynamic weather will be inserted here -->
-          </div>
-          <div class="pt-2 border-t border-blue-200">
-            <p class="text-xs text-gray-500">Last updated: Jun 13, 2025, 09:09 PM PST</p>
-          </div>
-        </div>
-      </div>
-      <div class="lg:col-span-2">
-        <div class="grid grid-cols-2 lg:grid-cols-5 gap-3">
-          <div class="restock bg-gradient-to-br from-orange-500 to-red-600 rounded-lg p-4 shadow-md border animate-pulse">
-            <div class="flex items-center justify-between mb-2">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock h-5 w-5 text-white">
-                <circle cx="12" cy="12" r="10"></circle>
-                <polyline points="12 6 12 12 16 14"></polyline>
-              </svg>
-              <span class="text-xs font-medium text-white/90 uppercase tracking-wider">Gear</span>
-            </div>
-            <div class="text-center">
-              <p class="text-2xl font-bold text-white font-mono">00h 01m 45s</p>
-              <p class="text-xs text-white/80 mt-1">Until Restock</p>
-            </div>
-          </div>
-          <div class="restock bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg p-4 shadow-md border animate-pulse">
-            <div class="flex items-center justify-between mb-2">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock h-5 w-5 text-white">
-                <circle cx="12" cy="12" r="10"></circle>
-                <polyline points="12 6 12 12 16 14"></polyline>
-              </svg>
-              <span class="text-xs font-medium text-white/90 uppercase tracking-wider">Seeds</span>
-            </div>
-            <div class="text-center">
-              <p class="text-2xl font-bold text-white font-mono">00h 01m 45s</p>
-              <p class="text-xs text-white/80 mt-1">Until Restock</p>
-            </div>
-          </div>
-          <div class="restock bg-gradient-to-br from-yellow-500 to-orange-600 rounded-lg p-4 shadow-md border">
-            <div class="flex items-center justify-between mb-2">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock h-5 w-5 text-white">
-                <circle cx="12" cy="12" r="10"></circle>
-                <polyline points="12 6 12 12 16 14"></polyline>
-              </svg>
-              <span class="text-xs font-medium text-white/90 uppercase tracking-wider">Eggs</span>
-            </div>
-            <div class="text-center">
-              <p class="text-2xl font-bold text-white font-mono">00h 21m 45s</p>
-              <p class="text-xs text-white/80 mt-1">Until Restock</p>
-            </div>
-          </div>
-          <div class="restock bg-gradient-to-br from-yellow-600 to-amber-700 rounded-lg p-4 shadow-md border">
-            <div class="flex items-center justify-between mb-2">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock h-5 w-5 text-white">
-                <circle cx="12" cy="12" r="10"></circle>
-                <polyline points="12 6 12 12 16 14"></polyline>
-              </svg>
-              <span class="text-xs font-medium text-white/90 uppercase tracking-wider">Honey</span>
-            </div>
-            <div class="text-center">
-              <p class="text-2xl font-bold text-white font-mono">00h 51m 45s</p>
-              <p class="text-xs text-white/80 mt-1">Until Restock</p>
-            </div>
-          </div>
-          <div class="restock bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg p-4 shadow-md border">
-            <div class="flex items-center justify-between mb-2">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock h-5 w-5 text-white">
-                <circle cx="12" cy="12" r="10"></circle>
-                <polyline points="12 6 12 12 16 14"></polyline>
-              </svg>
-              <span class="text-xs font-medium text-white/90 uppercase tracking-wider">Cosmetics</span>
-            </div>
-            <div class="text-center">
-              <p class="text-2xl font-bold text-white font-mono">06h 51m 45s</p>
-              <p class="text-xs text-white/80 mt-1">Until Restock</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+  <div id="status-checker" class="max-w-md mx-auto bg-white/90 p-6 rounded-xl border-4 border-green-500 shadow-xl text-center animate-slideIn">
+    <div id="status-text" class="text-lg font-semibold mb-2">Checking server...</div>
+    <div id="uptime" class="text-sm text-gray-600">Uptime: 0s</div>
+  </div>
 
-    <div class="search-bar">
-      <div class="flex flex-col sm:flex-row gap-4 items-center">
-        <div class="flex-1 relative">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400">
-            <circle cx="11" cy="11" r="8"></circle>
-            <path d="m21 21-4.3-4.3"></path>
-          </svg>
-          <input type="text" placeholder="Search for items (e.g., Watering Can, Sunflower, Egg...)" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors">
-        </div>
-        <button id="refresh-btn" class="flex items-center space-x-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-refresh-cw h-4 w-4">
-            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
-            <path d="M21 3v5h-5"></path>
-            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
-            <path d="M8 16H3v5"></path>
-          </svg>
-          <span>Refresh</span>
-        </button>
-      </div>
-    </div>
+  <div id="weather-container" class="max-w-md mx-auto bg-white/90 p-6 rounded-xl border-4 border-green-500 shadow-xl text-center mt-6 weather-box animate-slideIn">
+    <h2 class="text-xl font-semibold text-green-700 mb-4">Current Weather 🌦️</h2>
+    <div id="weather-content" class="text-lg font-medium text-gray-800">Fetching weather...</div>
+  </div>
 
-    <div id="status" class="text-center text-lg font-semibold my-4"></div>
-    <div class="flex justify-center gap-4 mb-6">
-      <button id="refresh-btn-alt" class="px-6 py-3 bg-amber-500 text-white rounded-lg font-bold hover:bg-amber-600 transition-colors duration-200 shadow-md">🔄 Refresh</button>
-      <button id="subscribe-btn" class="px-6 py-3 bg-green-500 text-white rounded-lg font-bold hover:bg-green-600 transition-colors duration-200 shadow-md">🔔 Subscribe</button>
-    </div>
+  <div id="status" class="text-center text-lg font-semibold my-4"></div>
+  <div class="flex justify-center gap-4">
+    <button id="refresh-btn" class="px-6 py-3 bg-amber-500 text-white rounded-lg font-bold hover:bg-amber-600 transition-colors duration-200 shadow-md">🔄 Refresh</button>
+    <button id="subscribe-btn" class="px-6 py-3 bg-green-500 text-white rounded-lg font-bold hover:bg-green-600 transition-colors duration-200 shadow-md">🔔 Subscribe</button>
+  </div>
 
-    <div id="stock-container" class="max-w-7xl mx-auto p-4 space-y-8"></div>
+  <div id="stock-container" class="max-w-7xl mx-auto p-4"></div>
 
-    <div id="debug-tab" class="fixed bottom-6 right-6 bg-green-600 text-white p-4 rounded-full text-xl cursor-pointer shadow-lg hover:bg-green-700 transition-colors duration-200">🪲</div>
-    <div id="debug-window" class="fixed bottom-20 right-6 w-80 max-h-96 bg-white border-2 border-green-500 rounded-xl p-4 overflow-y-auto shadow-xl hidden">
-      <button id="close-debug" class="bg-red-600 text-white px-3 py-1 rounded-lg float-right hover:bg-red-700 transition-colors duration-200">Close</button>
-      <pre id="debug-content" class="text-xs whitespace-pre-wrap break-all">Loading...</pre>
-    </div>
-  </main>
-
-  <footer class="mt-16 text-center py-8 border-t border-gray-200">
-    <p class="text-gray-600 mb-2">🌱 Grow A Garden Live Feed - Built with ❤️ by Alex</p>
-    <p class="text-sm text-gray-500">Real-time stock tracking • Philippine timezone • Auto-refresh every 30 seconds</p>
-  </footer>
+  <div id="debug-tab" class="fixed bottom-6 right-6 bg-green-600 text-white p-4 rounded-full text-xl cursor-pointer shadow-lg hover:bg-green-700 transition-colors duration-200">🪲</div>
+  <div id="debug-window" class="fixed bottom-20 right-6 w-80 max-h-96 bg-white border-2 border-green-500 rounded-xl p-4 overflow-y-auto shadow-xl hidden">
+    <button id="close-debug" class="bg-red-600 text-white px-3 py-1 rounded-lg float-right hover:bg-red-700 transition-colors duration-200">Close</button>
+    <pre id="debug-content" class="text-xs whitespace-pre-wrap break-all">Loading...</pre>
+  </div>
 
   <script>
     const stockURL = 'https://corsproxy.io/?https://api.joshlei.com/v2/growagarden/stock';
@@ -300,7 +73,6 @@
     const container = document.getElementById('stock-container');
     const weatherContainer = document.getElementById('weather-content');
     const refreshBtn = document.getElementById('refresh-btn');
-    const refreshBtnAlt = document.getElementById('refresh-btn-alt');
     const subscribeBtn = document.getElementById('subscribe-btn');
     const statusTextEl = document.getElementById('status-text');
     const uptimeEl = document.getElementById('uptime');
@@ -355,14 +127,9 @@
       if (activeWeather) {
         const remainingTime = activeWeather.end_duration_unix - Math.floor(Date.now() / 1000);
         weatherContainer.innerHTML = `
-          <div class="weather-item">
-            <p class="text-sm text-gray-600">Weather</p>
-            <p class="text-xl font-bold text-blue-700">${activeWeather.weather_name}</p>
-          </div>
-          <div class="weather-item">
-            <p class="text-sm text-gray-600">Crop Bonuses</p>
-            <p class="text-lg font-medium text-green-700">All crops +15% growth speed</p>
-          </div>
+          <div class="text-green-700 font-semibold">${activeWeather.weather_name}</div>
+          <div class="text-sm text-gray-600">Duration: ${formatTime(activeWeather.duration)}</div>
+          <div class="text-sm text-gray-600">Time Left: ${remainingTime > 0 ? formatTime(remainingTime) : 'Ending soon'}</div>
         `;
       } else {
         weatherContainer.innerHTML = `<div class="text-gray-600">No active weather event</div>`;
@@ -379,60 +146,17 @@
         const arr = data[cat];
         if (!Array.isArray(arr)) continue;
         const sec = document.createElement('div');
-        sec.className = `max-w-7xl mx-auto p-6 rounded-xl shadow-lg border mb-6 category-content ${cat.toLowerCase().replace(/ /g, '-')}`;
-        const header = document.createElement('div');
-        header.className = 'flex items-center justify-between mb-4';
-        const icon = document.createElement('svg');
-        icon.className = 'h-6 w-6 text-gray-800';
-        const h2 = document.createElement('h3');
-        h2.className = 'text-xl font-bold text-gray-800';
-        const restock = document.createElement('div');
-        restock.className = 'text-right';
-        const restockText = document.createElement('p');
-        restockText.className = 'text-sm text-gray-600';
-        restockText.textContent = 'Restock in';
-        const restockTime = document.createElement('p');
-        restockTime.className = 'text-lg font-bold text-orange-600 font-mono';
-        restockTime.textContent = '00h 01m 45s'; // Placeholder, adjust dynamically if needed
-        restock.appendChild(restockText);
-        restock.appendChild(restockTime);
-
-        if (cat.toLowerCase().includes('gear')) {
-          icon.innerHTML = '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z">';
-          icon.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-          icon.setAttribute('viewBox', '0 0 24 24');
-          h2.textContent = 'Gear & Tools';
-        } else if (cat.toLowerCase().includes('seeds')) {
-          icon.innerHTML = '<path d="M7 20h10"></path><path d="M10 20c5.5-2.5.8-6.4 3-10"></path><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"></path><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z">';
-          icon.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-          icon.setAttribute('viewBox', '0 0 24 24');
-          h2.textContent = 'Seeds & Plants';
-        } else if (cat.toLowerCase().includes('eggs')) {
-          icon.innerHTML = '<path d="M12 22c6.23-.05 7.87-5.57 7.5-10-.36-4.34-3.95-9.96-7.5-10-3.55.04-7.14 5.66-7.5 10-.37 4.43 1.27 9.95 7.5 10z">';
-          icon.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-          icon.setAttribute('viewBox', '0 0 24 24');
-          h2.textContent = 'Eggs';
-        } else if (cat.toLowerCase().includes('honey')) {
-          icon.innerHTML = '<path d="M17 10c.7-.7 1.69 0 2.5 0a2.5 2.5 0 1 0 0-5 .5.5 0 0 1-.5-.5 2.5 2.5 0 1 0-5 0c0 .81.7 1.8 0 2.5l-7 7c-.7.7-1.69 0-2.5 0a2.5 2.5 0 0 0 0 5c.28 0 .5.22.5.5a2.5 2.5 0 1 0 5 0c0-.81-.7-1.8 0-2.5Z">';
-          icon.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-          icon.setAttribute('viewBox', '0 0 24 24');
-          h2.textContent = 'Honey Products';
-        } else if (cat.toLowerCase().includes('cosmetics')) {
-          icon.innerHTML = '<path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path><path d="M5 3v4"></path><path d="M19 17v4"></path><path d="M3 5h4"></path><path d="M17 19h4">';
-          icon.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-          icon.setAttribute('viewBox', '0 0 24 24');
-          h2.textContent = 'Cosmetics';
-        }
-        header.appendChild(icon);
-        header.appendChild(h2);
-        header.appendChild(restock);
-        sec.appendChild(header);
+        sec.className = 'stock-category mb-6 p-4 bg-white/90 rounded-xl border-4 border-green-500 shadow-lg';
+        const h2 = document.createElement('h2');
+        h2.className = 'text-xl font-semibold text-green-700 bg-green-200 p-3 rounded-lg text-center';
+        h2.textContent = cat.replace(/_/g, ' ');
+        sec.appendChild(h2);
         const items = document.createElement('div');
-        items.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3';
+        items.className = 'items grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4';
         arr.forEach((it, index) => {
           if (it.icon) {
             const card = document.createElement('div');
-            card.className = 'item-card relative bg-white p-4 rounded-lg border-2 border-amber-400 shadow-md cursor-pointer item';
+            card.className = 'item-card relative bg-white p-4 rounded-lg border-2 border-amber-400 shadow-md cursor-pointer';
             const r = rarity(it.quantity || 0);
             const rb = document.createElement('div');
             rb.className = `rarity ${r} text-white text-xs font-bold px-2 py-1 rounded mb-2`;
@@ -450,7 +174,7 @@
             card.appendChild(nm);
             const qty = document.createElement('div');
             qty.className = 'item-qty text-gray-600 text-sm';
-            qty.textContent = `Qty: ${it.quantity || 0}${it.quantity <= 50 ? ' (LOW STOCK)' : ''}`;
+            qty.textContent = `Qty: ${it.quantity || 0}`;
             card.appendChild(qty);
 
             if (it.quantity > 0) {
@@ -515,7 +239,6 @@
     setInterval(fetchStock, 15000);
     setInterval(fetchWeather, 15000);
     refreshBtn.onclick = () => location.reload();
-    refreshBtnAlt.onclick = () => location.reload();
     subscribeBtn.onclick = () => {
       Notification.requestPermission().then(() => {
         subscribeBtn.textContent = Notification.permission === "granted" ? "🔔 Subscribed" : Notification.permission === "denied" ? "🔕 Denied" : "🔔 Subscribe";
@@ -532,7 +255,7 @@
     };
 
     // GSAP animations for initial load
-    gsap.from('header', { y: -50, opacity: 0, duration: 0.8 });
+    gsap.from('.navbar', { y: -50, opacity: 0, duration: 0.8 });
     gsap.from('h1', { opacity: 0, scale: 0.8, duration: 1 });
   </script>
 </body>

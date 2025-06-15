@@ -17,7 +17,7 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      -webkit-text-size-adjust: none; /* Prevent font boosting */
+      -webkit-text-size-adjust: none;
     }
 
     body {
@@ -53,7 +53,8 @@
       border-radius: 12px;
       cursor: pointer;
       position: relative;
-      min-width: 0; /* Prevent grid shrinkage */
+      min-width: 0;
+      padding: 1.5rem;
       transition: transform 0.4s ease, box-shadow 0.4s ease;
     }
 
@@ -82,6 +83,8 @@
       transition: transform 0.3s ease;
       position: relative;
       z-index: 10;
+      font-size: 0.9rem;
+      padding: 0.4rem 0.8rem;
     }
 
     .rarity:hover {
@@ -122,7 +125,7 @@
     /* Desktop grid layout for all devices */
     .items {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important; /* Desktop layout */
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
       gap: 1rem;
       padding: 1.5rem;
       scroll-snap-type: x proximity;
@@ -135,23 +138,18 @@
     .stock-category {
       scroll-behavior: smooth;
       width: 100%;
-      max-width: none; /* Prevent clipping */
+      max-width: none;
     }
 
-    /* Desktop card styles for all devices */
-    .item-card {
-      padding: 1.5rem;
-    }
     .item-card img {
       width: 140px;
       height: 140px;
+      object-contain;
+      margin: 0 auto;
     }
     .item-name, .item-qty {
       font-size: 1rem;
-    }
-    .rarity {
-      font-size: 0.9rem;
-      padding: 0.4rem 0.8rem;
+      text-align: center;
     }
 
     /* Typography */
@@ -220,27 +218,27 @@
   <main>
     <h1 class="text-5xl font-bold text-center my-12 animate-pulse">Grow A Garden Live Feed 🌌</h1>
 
-    <div id="status-checker" class="max-w-lg mx-auto glass-container p-8 text-center animate-slideIn">
-      <div id="status-text" class="text-xl font-semibold mb-2 text-white">Checking server...</div>
+    <div id="status-checker" class="max-w-md mx-auto glass-container p-6 text-center animate-slideIn">
+      <div id="status-text" class="text-lg font-semibold mb-2 text-white">Checking server...</div>
       <div id="uptime" class="text-sm text-gray-300">Uptime: 0s</div>
     </div>
 
-    <div id="weather-container" class="max-w-lg mx-auto glass-container p-8 text-center mt-8 animate-slideIn">
-      <h2 class="text-2xl font-semibold mb-4">Current Weather 🌌</h2>
+    <div id="weather-container" class="max-w-md mx-auto glass-container p-6 text-center mt-6 animate-slideIn">
+      <h2 class="text-xl font-semibold mb-4">Current Weather 🌌</h2>
       <div id="weather-content" class="text-lg font-medium text-gray-200">Fetching weather...</div>
     </div>
 
-    <div id="status" class="text-center text-xl font-semibold my-6 text-white"></div>
-    <div class="flex justify-center gap-6">
-      <button id="refresh-btn" class="px-8 py-3">🔄 Refresh</button>
-      <button id="subscribe-btn" class="px-8 py-3">Subscribe</button>
+    <div id="status" class="text-center text-lg font-semibold my-4 text-white"></div>
+    <div class="flex justify-center gap-4">
+      <button id="refresh-btn" class="px-6 py-3">🔄 Refresh</button>
+      <button id="subscribe-btn" class="px-6 py-3">🔔 Subscribe</button>
     </div>
 
-    <div id="stock-container" class="max-w-none mx-auto p-8 w-full"></div>
+    <div id="stock-container" class="max-w-none mx-auto p-4 w-full"></div>
 
-    <div id="debug-tab" class="fixed bottom-8 right-8 text-white p-5 rounded-full text-2xl cursor-pointer hover:scale-110 transition-transform duration-300">🪲</div>
-    <div id="debug-window" class="fixed bottom-24 right-8 w-96 max-h-96 p-6 overflow-y-auto hidden">
-      <button id="close-debug" class="bg-red-600 text-white px-4 py-2 rounded-lg float-right hover:bg-red-700">Close</button>
+    <div id="debug-tab" class="fixed bottom-6 right-6 text-white p-4 rounded-full text-xl cursor-pointer hover:scale-110 transition-transform duration-300">🪲</div>
+    <div id="debug-window" class="fixed bottom-20 right-6 w-80 max-h-96 p-4 overflow-y-auto hidden">
+      <button id="close-debug" class="bg-red-600 text-white px-3 py-1 rounded-lg float-right hover:bg-red-700">Close</button>
       <pre id="debug-content" class="text-xs text-gray-200 whitespace-pre-wrap break-all">Loading...</pre>
     </div>
   </main>
@@ -269,12 +267,6 @@
       retina_detect: true
     });
 
-    // Initialize content on page load
-    document.addEventListener('DOMContentLoaded', () => {
-      fetchStock().catch(e => console.error('Stock fetch failed:', e));
-      fetchWeather().catch(e => console.error('Weather fetch failed:', e));
-    });
-
     const stockURL = 'https://corsproxy.io/?https://api.joshlei.com/v2/growagarden/stock';
     const weatherURL = 'https://corsproxy.io/?https://api.joshlei.com/v2/growagarden/weather';
     const statusEl = document.getElementById('status');
@@ -295,7 +287,7 @@
       statusEl.textContent = msg;
       statusTextEl.textContent = msg;
       statusTextEl.style.color = col;
-      gsap.to(statusTextEl, { scale: 1.1, duration: 0.3, yoyo: true, repeat: 1 });
+      gsap.to(statusTextEl, { scale: 1.05, duration: 0.2, yoyo: true, repeat: 1 });
     }
 
     setInterval(() => {
@@ -342,7 +334,7 @@
       } else {
         weatherContainer.innerHTML = `<div class="text-gray-300">No active weather event</div>`;
       }
-      gsap.from(weatherContainer, { opacity: 0, y: 15, duration: 0.6, ease: 'power2.out' });
+      gsap.from(weatherContainer, { opacity: 0, y: 10, duration: 0.5 });
     }
 
     function display(data) {
@@ -350,7 +342,7 @@
       latestData = data;
       notified = false;
       container.innerHTML = '';
-      debugContent.textContent += `\nRaw Stock Data: ${JSON.stringify(data, null, 2)}`; // Log raw data
+      debugContent.textContent += `\nRaw Stock Data: ${JSON.stringify(data, null, 2)}`;
 
       for (const cat in data) {
         const arr = data[cat];
@@ -358,14 +350,14 @@
           debugContent.textContent += `\nSkipping non-array category: ${cat}`;
           continue;
         }
-        const validItems = arr.filter(it => it && (it.icon || it.quantity !== undefined)); // Relaxed filtering
+        const validItems = arr.filter(it => it && (it.icon || it.quantity !== undefined));
         debugContent.textContent += `\nCategory ${cat}: ${validItems.length} valid items`;
         if (validItems.length === 0) continue;
 
         const sec = document.createElement('div');
-        sec.className = 'stock-category glass-container mb-8 p-6';
+        sec.className = 'stock-category glass-container mb-6 p-4';
         const h2 = document.createElement('h2');
-        h2.className = 'text-2xl font-semibold text-center mb-6';
+        h2.className = 'text-xl font-semibold text-center mb-4';
         h2.textContent = cat.replace(/_/g, ' ');
         sec.appendChild(h2);
         const items = document.createElement('div');
@@ -379,7 +371,7 @@
           card.setAttribute('data-tilt-max-glare', '0.3');
           const r = rarity(it.quantity || 0);
           const rb = document.createElement('div');
-          rb.className = `rarity ${r} text-white text-xs font-bold px-3 py-1 rounded mb-3`;
+          rb.className = `rarity ${r} text-white text-xs font-bold px-2 py-1 rounded mb-2`;
           rb.textContent = r.toUpperCase();
           rb.style.background = r === 'common' ? 'linear-gradient(to right, #6b7280, #4b5563)' :
                               r === 'uncommon' ? 'linear-gradient(to right, #34d399, #10b981)' :
@@ -387,16 +379,15 @@
                               'linear-gradient(to right, #a855f7, #ec4899)';
           card.appendChild(rb);
           const img = document.createElement('img');
-          img.src = it.icon || 'https://via.placeholder.com/140'; // Fallback image
+          img.src = it.icon || 'https://via.placeholder.com/140';
           img.alt = it.display_name || it.item_id || 'Unknown Item';
-          img.className = 'object-contain mx-auto';
           card.appendChild(img);
           const nm = document.createElement('div');
-          nm.className = 'item-name font-bold mt-3 text-white text-sm text-center';
+          nm.className = 'item-name font-bold mt-2 text-white';
           nm.textContent = it.display_name || it.item_id || 'Unknown';
           card.appendChild(nm);
           const qty = document.createElement('div');
-          qty.className = 'item-qty text-gray-300 text-sm text-center';
+          qty.className = 'item-qty text-gray-300';
           qty.textContent = `Qty: ${it.quantity !== undefined ? it.quantity : 'N/A'}`;
           card.appendChild(qty);
 
@@ -414,38 +405,38 @@
               if (e.target !== buyBtn) {
                 const isOpen = dropdown.style.display === 'block';
                 dropdown.style.display = isOpen ? 'none' : 'block';
-                gsap.fromTo(dropdown, { scaleY: 0, opacity: 0 }, { scaleY: 1, opacity: 1, duration: 0.4, ease: 'power3.out' });
+                gsap.fromTo(dropdown, { scaleY: 0, opacity: 0 }, { scaleY: 1, opacity: 1, duration: 0.3, ease: 'power2.out' });
               }
             };
           }
 
           items.appendChild(card);
-          gsap.from(card, { opacity: 0, y: 30, duration: 0.6, delay: index * 0.1, ease: 'power2.out' });
+          gsap.from(card, { opacity: 0, y: 20, duration: 0.5, delay: index * 0.1 });
+
+          // Swipe support
+          const hammer = new Hammer(items);
+          let velocity = 0;
+          hammer.on('swipeleft', () => {
+            velocity = -300;
+            gsap.to(items, { scrollLeft: '+=300', duration: 0.6, ease: 'power2.out' });
+          });
+          hammer.on('swiperight', () => {
+            velocity = 300;
+            gsap.to(items, { scrollLeft: '-=300', duration: 0.6, ease: 'power2.out' });
+          });
+
+          items.addEventListener('scroll', () => {
+            velocity *= 0.95;
+            if (Math.abs(velocity) > 1) {
+              items.scrollLeft += velocity * 0.1;
+              requestAnimationFrame(() => items.dispatchEvent(new Event('scroll')));
+            }
+          });
         });
 
         sec.appendChild(items);
         container.appendChild(sec);
-        gsap.from(sec, { opacity: 0, y: 50, duration: 0.8, ease: 'power2.out' });
-
-        // Swipe support with momentum
-        const hammer = new Hammer(items);
-        let velocity = 0;
-        hammer.on('swipeleft', () => {
-          velocity = -300;
-          gsap.to(items, { scrollLeft: '+=300', duration: 0.6, ease: 'power2.out' });
-        });
-        hammer.on('swiperight', () => {
-          velocity = 300;
-          gsap.to(items, { scrollLeft: '-=300', duration: 0.6, ease: 'power2.out' });
-        });
-
-        items.addEventListener('scroll', () => {
-          velocity *= 0.95;
-          if (Math.abs(velocity) > 1) {
-            items.scrollLeft += velocity * 0.1;
-            requestAnimationFrame(() => items.dispatchEvent(new Event('scroll')));
-          }
-        });
+        gsap.from(sec, { opacity: 0, y: 30, duration: 0.7 });
       }
       if (!first) notify();
       else first = false;
@@ -486,38 +477,40 @@
       }
     }
 
-    // Initial fetches
+    document.addEventListener('DOMContentLoaded', () => {
+      fetchStock();
+      fetchWeather();
+    });
+
     fetchStock();
     fetchWeather();
     setInterval(fetchStock, 15000);
     setInterval(fetchWeather, 15000);
 
-    // Resize listener for dynamic grid adjustment
     window.addEventListener('resize', () => {
       if (latestData && Object.keys(latestData).length) {
-        display(latestData); // Re-render grid
+        display(latestData);
       }
     });
 
     refreshBtn.onclick = () => location.reload();
     subscribeBtn.onclick = () => {
       Notification.requestPermission().then(() => {
-        subscribeBtn.textContent = Notification.permission === "granted" ? "Subscribed" : Notification.permission === "denied" ? "Denied" : "Subscribe";
+        subscribeBtn.textContent = Notification.permission === "granted" ? "🔔 Subscribed" : Notification.permission === "denied" ? "🔕 Denied" : "🔔 Subscribe";
       });
     };
     debugTab.onclick = () => {
       debugWindow.style.display = debugWindow.style.display === 'block' ? 'none' : 'block';
       if (debugWindow.style.display === 'block') {
-        gsap.from(debugWindow, { x: 30, opacity: 0, duration: 0.6, ease: 'power2.out' });
+        gsap.from(debugWindow, { x: 20, opacity: 0, duration: 0.5 });
       }
     };
     closeDebug.onclick = () => {
-      gsap.to(debugWindow, { x: 30, opacity: 0, duration: 0.4, onComplete: () => debugWindow.style.display = 'none' });
+      gsap.to(debugWindow, { x: 20, opacity: 0, duration: 0.3, onComplete: () => debugWindow.style.display = 'none' });
     };
 
-    // GSAP animations for initial content reveal
-    gsap.from('h1', { opacity: 0, scale: 1.2, duration: 2, ease: 'power3.out' });
-    gsap.from('.glass-container', { opacity: 0, y: 100, stagger: 0.3, duration: 1.5, ease: 'power2.out' });
+    gsap.from('h1', { opacity: 0, scale: 0.8, duration: 1 });
+    gsap.from('.glass-container', { opacity: 0, y: 30, duration: 0.7, stagger: 0.2 });
   </script>
 </body>
 </html>

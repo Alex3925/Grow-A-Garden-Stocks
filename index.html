@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
@@ -12,30 +12,6 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;600&display=swap');
 
-    :root {
-      /* Dark mode variables */
-      --bg: linear-gradient(135deg, #2e1065, #4c1d95);
-      --text: #ffffff;
-      --text-secondary: #d1d5db;
-      --glass-bg: rgba(255, 255, 255, 0.1);
-      --glass-border: rgba(255, 255, 255, 0.2);
-      --card-bg: rgba(255, 255, 255, 0.08);
-      --shadow: rgba(0, 0, 0, 0.2);
-      --shadow-hover: rgba(167, 139, 250, 0.4);
-    }
-
-    [data-theme="light"] {
-      /* Light mode variables */
-      --bg: #f3f4f6;
-      --text: #1f2937;
-      --text-secondary: #4b5563;
-      --glass-bg: rgba(255, 255, 255, 0.8);
-      --glass-border: rgba(0, 0, 0, 0.1);
-      --card-bg: rgba(255, 255, 255, 0.9);
-      --shadow: rgba(0, 0, 0, 0.1);
-      --shadow-hover: rgba(107, 114, 128, 0.3);
-    }
-
     * {
       margin: 0;
       padding: 0;
@@ -44,34 +20,33 @@
     }
 
     body {
-      background: var(--bg);
+      background: linear-gradient(135deg, #2e1065, #4c1d95);
       min-height: 100vh;
       font-family: 'Inter', sans-serif;
       overflow-x: hidden;
       position: relative;
       display: flex;
       flex-direction: column;
-      color: var(--text);
     }
 
     .glass-container {
-      background: var(--glass-bg);
+      background: rgba(255, 255, 255, 0.1);
       backdrop-filter: blur(12px);
-      border: 1px solid var(--glass-border);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 16px;
-      box-shadow: 0 8px 32px var(--shadow);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
     .glass-container:hover {
       transform: translateY(-4px);
-      box-shadow: 0 12px 40px var(--shadow);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
     }
 
     .item-card {
-      background: var(--card-bg);
+      background: rgba(255, 255, 255, 0.08);
       backdrop-filter: blur(8px);
-      border: 1px solid var(--glass-border);
+      border: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: 12px;
       cursor: pointer;
       position: relative;
@@ -83,7 +58,7 @@
 
     .item-card:hover {
       transform: translateY(-8px);
-      box-shadow: 0 12px 24px var(--shadow-hover);
+      box-shadow: 0 12px 24px rgba(167, 139, 250, 0.4);
     }
 
     .rarity {
@@ -99,9 +74,9 @@
     }
 
     .dropdown {
-      background: var(--card-bg);
+      background: rgba(255, 255, 255, 0.12);
       backdrop-filter: blur(8px);
-      border: 1px solid var(--glass-border);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 12px;
       transition: all 0.3s ease;
       transform-origin: top;
@@ -126,18 +101,6 @@
 
     button:active {
       transform: scale(0.95);
-    }
-
-    #theme-toggle {
-      background: var(--glass-bg);
-      color: var(--text);
-      padding: 0.5rem;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
 
     .items {
@@ -180,46 +143,22 @@
 
     h2 {
       font-family: 'Orbitron', sans-serif;
-      color: var(--text-secondary);
+      color: #d8b4fe;
       text-shadow: 0 0 8px rgba(168, 85, 247, 0.6);
     }
 
     #debug-window {
-      background: var(--glass-bg);
+      background: rgba(255, 255, 255, 0.1);
       backdrop-filter: blur(12px);
-      border: 1px solid var(--glass-border);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 16px;
-      box-shadow: 0 8px 32px var(--shadow);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     }
 
     #debug-tab {
       background: linear-gradient(to right, #a855f7, #ec4899);
       box-shadow: 0 0 12px rgba(168, 85, 247, 0.5);
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    #hide-debug {
-      position: absolute;
-      top: -8px;
-      right: -8px;
-      background: rgba(239, 68, 68, 0.8);
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 20px;
-      height: 20px;
-      font-size: 12px;
-      line-height: 20px;
-      text-align: center;
-      cursor: pointer;
-      transition: transform 0.2s ease;
-    }
-
-    #hide-debug:hover {
-      transform: scale(1.2);
+      display: none; /* Hidden by default */
     }
 
     #particles-js {
@@ -234,7 +173,7 @@
     footer {
       text-align: center;
       padding: 2rem;
-      color: var(--text-secondary);
+      color: #d8b4fe;
       font-size: 1rem;
       text-shadow: 0 0 8px rgba(168, 85, 247, 0.4);
     }
@@ -258,7 +197,7 @@
     <h1 class="text-5xl font-bold text-center my-12 animate-pulse">Grow A Garden Live Feed 🌌</h1>
 
     <div id="status-checker" class="max-w-md mx-auto glass-container p-6 text-center animate-slideIn">
-      <div id="status-text" class="text-lg font-semibold mb-2">Checking server...</div>
+      <div id="status-text" class="text-lg font-semibold mb-2 text-white">Checking server...</div>
       <div id="uptime" class="text-sm text-gray-300">Uptime: 0s</div>
     </div>
 
@@ -267,19 +206,15 @@
       <div id="weather-content" class="text-lg font-medium text-gray-200">Fetching weather...</div>
     </div>
 
-    <div id="status" class="text-center text-lg font-semibold my-4"></div>
+    <div id="status" class="text-center text-lg font-semibold my-4 text-white"></div>
     <div class="flex justify-center gap-4">
-      <button id="theme-toggle" title="Toggle Theme">🌙</button>
       <button id="refresh-btn" class="px-6 py-3">🔄 Refresh</button>
       <button id="subscribe-btn" class="px-6 py-3">🔔 Subscribe</button>
     </div>
 
     <div id="stock-container" class="max-w-none mx-auto p-4 w-full"></div>
 
-    <div id="debug-tab" class="fixed bottom-6 right-6 text-white p-4 rounded-full text-xl cursor-pointer hover:scale-110 transition-transform duration-300">
-      🪲
-      <button id="hide-debug" title="Hide Debug">×</button>
-    </div>
+    <div id="debug-tab" class="fixed bottom-6 right-6 text-white p-4 rounded-full text-xl cursor-pointer hover:scale-110 transition-transform duration-300">🪲</div>
     <div id="debug-window" class="fixed bottom-20 right-6 w-80 max-h-96 p-4 overflow-y-auto hidden">
       <button id="close-debug" class="bg-red-600 text-white px-3 py-1 rounded-lg float-right hover:bg-red-700">Close</button>
       <pre id="debug-content" class="text-xs text-gray-200 whitespace-pre-wrap break-all">Loading...</pre>
@@ -323,39 +258,27 @@
     const debugWindow = document.getElementById('debug-window');
     const debugContent = document.getElementById('debug-content');
     const closeDebug = document.getElementById('close-debug');
-    const themeToggle = document.getElementById('theme-toggle');
-    const hideDebug = document.getElementById('hide-debug');
 
     let latestData = {}, latestWeather = {}, first = true, notified = false, seconds = 0;
 
-    // Theme handling
-    function setTheme(theme) {
-      document.documentElement.setAttribute('data-theme', theme);
-      themeToggle.textContent = theme === 'dark' ? '🌙' : '☀️';
-      localStorage.setItem('theme', theme);
-    }
+    // Triple tap/click detection
+    let clickTimes = [];
+    const maxInterval = 500; // Max time between clicks (ms)
 
-    // Load saved theme or default to dark
-    const savedTheme = localStorage.getItem('theme') || 'dark';
-    setTheme(savedTheme);
+    document.addEventListener('click', (e) => {
+      const now = Date.now();
+      clickTimes.push(now);
+      clickTimes = clickTimes.filter(time => now - time < maxInterval * 2); // Keep clicks within 1s
 
-    themeToggle.onclick = () => {
-      const currentTheme = document.documentElement.getAttribute('data-theme');
-      setTheme(currentTheme === 'dark' ? 'light' : 'dark');
-    };
-
-    // Debug tab visibility
-    if (localStorage.getItem('hideDebug') === 'true') {
-      debugTab.style.display = 'none';
-      debugWindow.style.display = 'none';
-    }
-
-    hideDebug.onclick = () => {
-      debugTab.style.display = 'none';
-      debugWindow.style.display = 'none';
-      localStorage.setItem('hideDebug', 'true');
-      gsap.to(debugTab, { opacity: 0, scale: 0, duration: 0.3 });
-    };
+      if (clickTimes.length >= 3 && (clickTimes[2] - clickTimes[0]) < maxInterval * 2) {
+        if (debugTab.style.display !== 'block') {
+          debugTab.style.display = 'block';
+          gsap.from(debugTab, { opacity: 0, scale: 0, duration: 0.5, ease: 'elastic.out(1, 0.5)' });
+          debugContent.textContent += `\nDebug tab shown at ${new Date().toISOString()}`;
+        }
+        clickTimes = []; // Reset after showing
+      }
+    });
 
     function updateStatus(msg, col = '#d8b4fe') {
       statusEl.textContent = msg;
@@ -402,7 +325,7 @@
       if (activeWeather) {
         const remainingTime = activeWeather.end_duration_unix - Math.floor(Date.now() / 1000);
         weatherContainer.innerHTML = `
-          <div class="font-semibold">${activeWeather.weather_name}</div>
+          <div class="text-white font-semibold">${activeWeather.weather_name}</div>
           <div class="text-sm text-gray-300">Duration: ${formatTime(activeWeather.duration)}</div>
           <div class="text-sm text-gray-300">Time Left: ${remainingTime > 0 ? formatTime(remainingTime) : 'Ending soon'}</div>
         `;
@@ -454,7 +377,7 @@
           img.alt = it.display_name || it.item_id || 'Unknown Item';
           card.appendChild(img);
           const nm = document.createElement('div');
-          nm.className = 'item-name font-bold mt-2';
+          nm.className = 'item-name font-bold mt-2 text-white';
           nm.textContent = it.display_name || it.item_id || 'Unknown';
           card.appendChild(nm);
           const qty = document.createElement('div');
@@ -576,4 +499,18 @@
         subscribeBtn.textContent = Notification.permission === "granted" ? "🔔 Subscribed" : Notification.permission === "denied" ? "🔕 Denied" : "🔔 Subscribe";
       });
     };
-    debugTab
+    debugTab.onclick = () => {
+      debugWindow.style.display = debugWindow.style.display === 'block' ? 'none' : 'block';
+      if (debugWindow.style.display === 'block') {
+        gsap.from(debugWindow, { x: 20, opacity: 0, duration: 0.5 });
+      }
+    };
+    closeDebug.onclick = () => {
+      gsap.to(debugWindow, { x: 20, opacity: 0, duration: 0.3, onComplete: () => debugWindow.style.display = 'none' });
+    };
+
+    gsap.from('h1', { opacity: 0, scale: 0.8, duration: 1 });
+    gsap.from('.glass-container', { opacity: 0, y: 30, duration: 0.7, stagger: 0.2 });
+  </script>
+</body>
+</html>

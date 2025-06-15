@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
   <title>Grow A Garden Live Feed</title>
   <meta name="theme-color" content="#6b21a8" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
@@ -17,6 +17,7 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      -webkit-text-size-adjust: none; /* Prevent font boosting in mobile */
     }
 
     body {
@@ -55,7 +56,6 @@
       backdrop-filter: blur(8px);
       border: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: 12px;
-      padding: 1.5rem;
       cursor: pointer;
       position: relative;
       overflow: hidden;
@@ -127,21 +127,44 @@
     /* Dynamic grid layout */
     .items {
       display: grid;
-      gap: 1.5rem;
-      padding: 2rem;
+      gap: 1rem; /* Reduced gap for smaller screens */
+      padding: 1.5rem;
       scroll-snap-type: x proximity;
       overflow-x: auto;
       scroll-behavior: smooth;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .stock-category {
       scroll-behavior: smooth;
+      width: 100%;
     }
 
     /* Responsive grid adjustments */
-    @media (max-width: 639px) { /* Phone */
+    @media (max-width: 359px) { /* Small phones (e.g., older iPhones) */
       .items {
-        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)) !important;
+      }
+      .item-card {
+        padding: 0.75rem;
+      }
+      .item-card img {
+        width: 80px;
+        height: 80px;
+      }
+      .item-name, .item-qty {
+        font-size: 0.7rem;
+      }
+      .rarity {
+        font-size: 0.6rem;
+        padding: 0.2rem 0.5rem;
+      }
+    }
+
+    @media (min-width: 360px) and (max-width: 639px) { /* Phones (e.g., iPhone 14, Galaxy S23) */
+      .items {
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important;
       }
       .item-card {
         padding: 1rem;
@@ -159,9 +182,9 @@
       }
     }
 
-    @media (min-width: 640px) and (max-width: 1023px) { /* Tablet */
+    @media (min-width: 640px) and (max-width: 1023px) { /* Tablets (e.g., iPad) */
       .items {
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
       }
       .item-card {
         padding: 1.25rem;
@@ -179,9 +202,9 @@
       }
     }
 
-    @media (min-width: 1024px) { /* Laptop/PC/Chromebook */
+    @media (min-width: 1024px) { /* Laptops/PCs/Chromebooks */
       .items {
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
       }
       .item-card {
         padding: 1.5rem;
@@ -400,288 +423,4 @@
   </main>
 
   <footer>
-    Made With ❤️ By: Facebook Developer: <a href="https://www.facebook.com/100085861488156" target="_blank" rel="noopener noreferrer">Alex</a>
-  </footer>
-
-  <script>
-    // Particles.js configuration
-    particlesJS('particles-js', {
-      particles: {
-        number: { value: 80, density: { enable: true, value_area: 800 } },
-        color: { value: ['#a855f7', '#ec4899', '#d8b4fe'] },
-        shape: { type: 'circle' },
-        opacity: { value: 0.5, random: true },
-        size: { value: 3, random: true },
-        line_linked: { enable: true, distance: 150, color: '#a855f7', opacity: 0.4, width: 1 },
-        move: { enable: true, speed: 4, direction: 'none', random: true, out_mode: 'out' }
-      },
-      interactivity: {
-        detect_on: 'canvas',
-        events: { onhover: { enable: true, mode: 'repulse' }, onclick: { enable: true, mode: 'push' }, resize: true },
-        modes: { repulse: { distance: 100, duration: 0.4 }, push: { particles_nb: 4 } }
-      },
-      retina_detect: true
-    });
-
-    // Loading screen logic
-    document.addEventListener('DOMContentLoaded', () => {
-      const loader = document.getElementById('loader-container');
-      const main = document.querySelector('main');
-      const footer = document.querySelector('footer');
-
-      // Start fetches immediately
-      fetchStock().catch(e => console.error('Stock fetch failed:', e));
-      fetchWeather().catch(e => console.error('Weather fetch failed:', e));
-
-      // Force loader to show for 3.5 seconds, then fade out
-      setTimeout(() => {
-        gsap.to(loader, {
-          opacity: 0,
-          duration: 0.5,
-          ease: 'power2.out',
-          onComplete: () => {
-            loader.style.display = 'none'; // Ensure loader is removed
-            main.style.visibility = 'visible';
-            footer.style.visibility = 'visible';
-            gsap.to([main, footer], { opacity: 1, duration: 0.8, ease: 'power2.out', stagger: 0.2 });
-          }
-        });
-      }, 3500);
-    });
-
-    const stockURL = 'https://corsproxy.io/?https://api.joshlei.com/v2/growagarden/stock';
-    const weatherURL = 'https://corsproxy.io/?https://api.joshlei.com/v2/growagarden/weather';
-    const statusEl = document.getElementById('status');
-    const container = document.getElementById('stock-container');
-    const weatherContainer = document.getElementById('weather-content'); // Fixed ID
-    const refreshBtn = document.getElementById('refresh-btn');
-    const subscribeBtn = document.getElementById('subscribe-btn');
-    const statusTextEl = document.getElementById('status-text');
-    const uptimeEl = document.getElementById('uptime');
-    const debugTab = document.getElementById('debug-tab');
-    const debugWindow = document.getElementById('debug-window');
-    const debugContent = document.getElementById('debug-content');
-    const closeDebug = document.getElementById('close-debug');
-
-    let latestData = {}, latestWeather = {}, first = true, notified = false, seconds = 0;
-
-    function updateStatus(msg, col = '#d8b4fe') {
-      statusEl.textContent = msg;
-      statusTextEl.textContent = msg;
-      statusTextEl.style.color = col;
-      gsap.to(statusTextEl, { scale: 1.1, duration: 0.3, yoyo: true, repeat: 1 });
-    }
-
-    setInterval(() => {
-      seconds++;
-      uptimeEl.textContent = `Uptime: ${seconds}s`;
-    }, 1000);
-
-    function notify() {
-      if (!("Notification" in window) || notified) return;
-      if (Notification.permission === "granted") {
-        new Notification("Garden Stock Updated!", { body: "Reload to see latest stock!" });
-        notified = true;
-      }
-    }
-
-    function hasChanged(o, n) {
-      return JSON.stringify(o) !== JSON.stringify(n);
-    }
-
-    function rarity(q) {
-      if (q >= 50) return 'common';
-      if (q >= 20) return 'uncommon';
-      if (q >= 5) return 'rare';
-      return 'epic';
-    }
-
-    function formatTime(seconds) {
-      const minutes = Math.floor(seconds / 60);
-      const secs = seconds % 60;
-      return `${minutes}m ${secs}s`;
-    }
-
-    function displayWeather(data) {
-      if (!hasChanged(latestWeather, data)) return;
-      latestWeather = data;
-      const activeWeather = data.weather.find(w => w.active) || null;
-      if (activeWeather) {
-        const remainingTime = activeWeather.end_duration_unix - Math.floor(Date.now() / 1000);
-        weatherContainer.innerHTML = `
-          <div class="text-white font-semibold">${activeWeather.weather_name}</div>
-          <div class="text-sm text-gray-300">Duration: ${formatTime(activeWeather.duration)}</div>
-          <div class="text-sm text-gray-300">Time Left: ${remainingTime > 0 ? formatTime(remainingTime) : 'Ending soon'}</div>
-        `;
-      } else {
-        weatherContainer.innerHTML = `<div class="text-gray-300">No active weather event</div>`;
-      }
-      gsap.from(weatherContainer, { opacity: 0, y: 15, duration: 0.6, ease: 'power2.out' });
-    }
-
-    function display(data) {
-      if (!hasChanged(latestData, data)) return;
-      latestData = data;
-      notified = false;
-      container.innerHTML = ''; // Clear previous content
-
-      for (const cat in data) {
-        const arr = data[cat];
-        if (!Array.isArray(arr)) continue;
-        const validItems = arr.filter(it => it.icon && it.quantity !== undefined);
-        if (validItems.length === 0) continue;
-
-        const sec = document.createElement('div');
-        sec.className = 'stock-category glass-container mb-8 p-6';
-        const h2 = document.createElement('h2');
-        h2.className = 'text-2xl font-semibold text-center mb-6';
-        h2.textContent = cat.replace(/_/g, ' ');
-        sec.appendChild(h2);
-        const items = document.createElement('div');
-        items.className = 'items';
-
-        // Dynamic grid resizing based on item count
-        const itemCount = validItems.length;
-        let cols = Math.min(itemCount, 4);
-        if (itemCount === 1) cols = 1;
-        else if (itemCount <= 3) cols = Math.min(itemCount, 2);
-
-        validItems.forEach((it, index) => {
-          const card = document.createElement('div');
-          card.className = 'item-card';
-          card.setAttribute('data-tilt', '');
-          card.setAttribute('data-tilt-glare', 'true');
-          card.setAttribute('data-tilt-max-glare', '0.3');
-          const r = rarity(it.quantity);
-          const rb = document.createElement('div');
-          rb.className = `rarity ${r} text-white text-xs font-bold px-3 py-1 rounded mb-3`;
-          rb.textContent = r.toUpperCase();
-          rb.style.background = r === 'common' ? 'linear-gradient(to right, #6b7280, #4b5563)' :
-                              r === 'uncommon' ? 'linear-gradient(to right, #34d399, #10b981)' :
-                              r === 'rare' ? 'linear-gradient(to right, #3b82f6, #2563eb)' :
-                              'linear-gradient(to right, #a855f7, #ec4899)';
-          card.appendChild(rb);
-          const img = document.createElement('img');
-          img.src = it.icon;
-          img.alt = it.display_name || it.item_id;
-          img.className = 'object-contain mx-auto';
-          card.appendChild(img);
-          const nm = document.createElement('div');
-          nm.className = 'item-name font-bold mt-3 text-white text-sm text-center';
-          nm.textContent = it.display_name || it.item_id;
-          card.appendChild(nm);
-          const qty = document.createElement('div');
-          qty.className = 'item-qty text-gray-300 text-sm text-center';
-          qty.textContent = `Qty: ${it.quantity}`;
-          card.appendChild(qty);
-
-          if (it.quantity > 0) {
-            const dropdown = document.createElement('div');
-            dropdown.className = 'dropdown absolute top-full left-0 right-0 p-4 mt-2 hidden';
-            const buyBtn = document.createElement('button');
-            buyBtn.className = 'w-full px-4 py-2';
-            buyBtn.textContent = 'Buy in Roblox';
-            buyBtn.onclick = () => window.open('https://www.roblox.com/games/126884695634066/Grow-a-Garden?gameSetTypeId=100000003&homePageSessionInfo=43809c21-f2d6-45f6-ba36-b9a4f3a73aef&isAd=false&numberOfLoadedTiles=50&page=homePage&placeId=126884695634066&playContext=homePage&position=0&sortPos=3&universeId=7436755782#ropro-quick-play', '_blank');
-            dropdown.appendChild(buyBtn);
-            card.appendChild(dropdown);
-
-            card.onclick = (e) => {
-              if (e.target !== buyBtn) {
-                const isOpen = dropdown.style.display === 'block';
-                dropdown.style.display = isOpen ? 'none' : 'block';
-                gsap.fromTo(dropdown, { scaleY: 0, opacity: 0 }, { scaleY: 1, opacity: 1, duration: 0.4, ease: 'power3.out' });
-              }
-            };
-          }
-
-          items.appendChild(card);
-          gsap.from(card, { opacity: 0, y: 30, duration: 0.6, delay: index * 0.1, ease: 'power2.out' });
-        });
-
-        sec.appendChild(items);
-        container.appendChild(sec);
-        gsap.from(sec, { opacity: 0, y: 50, duration: 0.8, ease: 'power2.out' });
-
-        // Swipe support with momentum
-        const hammer = new Hammer(items);
-        let velocity = 0;
-        hammer.on('swipeleft', () => {
-          velocity = -300;
-          gsap.to(items, { scrollLeft: '+=300', duration: 0.6, ease: 'power2.out' });
-        });
-        hammer.on('swiperight', () => {
-          velocity = 300;
-          gsap.to(items, { scrollLeft: '-=300', duration: 0.6, ease: 'power2.out' });
-        });
-
-        items.addEventListener('scroll', () => {
-          velocity *= 0.95;
-          if (Math.abs(velocity) > 1) {
-            items.scrollLeft += velocity * 0.1;
-            requestAnimationFrame(() => items.dispatchEvent(new Event('scroll')));
-          }
-        });
-      }
-      if (!first) notify();
-      else first = false;
-
-      VanillaTilt.init(document.querySelectorAll('.item-card'), {
-        max: 15,
-        speed: 400,
-        glare: true,
-        'max-glare': 0.3
-      });
-    }
-
-    async function fetchWeather() {
-      try {
-        const response = await fetch(weatherURL);
-        const data = await response.json();
-        debugContent.textContent += `\nWeather Data: ${JSON.stringify(data, null, 2)}`;
-        displayWeather(data);
-      } catch (e) {
-        console.error(e);
-        weatherContainer.innerHTML = `<div class="text-red-400">Failed to fetch weather ❌</div>`;
-        debugContent.textContent += `\nWeather Error: ${e.message}`;
-      }
-    }
-
-    async function fetchStock() {
-      try {
-        updateStatus("Fetching stock...", "#d8b4fe");
-        const response = await fetch(stockURL);
-        const j = await response.json();
-        debugContent.textContent = JSON.stringify(j, null, 2);
-        display(j);
-        updateStatus("Stock updated ✅", "#a855f7");
-      } catch (e) {
-        console.error(e);
-        updateStatus("Failed to fetch ❌", "#f87171");
-        debugContent.textContent = `Error: ${e.message}`;
-      }
-    }
-
-    setInterval(fetchStock, 15000);
-    setInterval(fetchWeather, 15000);
-    refreshBtn.onclick = () => location.reload();
-    subscribeBtn.onclick = () => {
-      Notification.requestPermission().then(() => {
-        subscribeBtn.textContent = Notification.permission === "granted" ? "Subscribed" : Notification.permission === "denied" ? "Denied" : "Subscribe";
-      });
-    };
-    debugTab.onclick = () => {
-      debugWindow.style.display = debugWindow.style.display === 'block' ? 'none' : 'block';
-      if (debugWindow.style.display === 'block') {
-        gsap.from(debugWindow, { x: 30, opacity: 0, duration: 0.6, ease: 'power2.out' });
-      }
-    };
-    closeDebug.onclick = () => {
-      gsap.to(debugWindow, { x: 30, opacity: 0, duration: 0.4, onComplete: () => debugWindow.style.display = 'none' });
-    };
-
-    // GSAP animations for initial content reveal
-    gsap.from('h1', { opacity: 0, scale: 1.2, duration: 2, ease: 'power3.out' });
-    gsap.from('.glass-container', { opacity: 0, y: 100, stagger: 0.3, duration: 1.5, ease: 'power2.out' });
-  </script>
-</body>
-</html>
+    Made With ❤️ By: Facebook Developer: <a href="https://www.facebook.com/100085861488

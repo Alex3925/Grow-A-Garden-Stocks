@@ -2,71 +2,249 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
   <title>Grow A Garden Live Feed</title>
-  <meta name="theme-color" content="#4caf50" />
+  <meta name="theme-color" content="#6b21a8" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body {
-      background: url('BACKGROUND_URL') no-repeat center center fixed;
-      background-size: cover;
-      min-height: 100vh;
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;600&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-text-size-adjust: none;
     }
+
+    body {
+      background: linear-gradient(135deg, #2e1065, #4c1d95);
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .glass-container {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .glass-container:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .item-card {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      cursor: pointer;
+      position: relative;
+      min-width: 0;
+      padding: 1.5rem;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transform: none;
+    }
+
+    .item-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 24px rgba(167, 139, 250, 0.4);
+    }
+
+    .rarity {
+      transition: transform 0.3s ease;
+      position: relative;
+      z-index: 10;
+      font-size: 0.9rem;
+      padding: 0.4rem 0.8rem;
+    }
+
+    .rarity:hover {
+      transform: scale(1.1);
+    }
+
     .dropdown {
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
       transition: all 0.3s ease;
       transform-origin: top;
     }
-    .rarity {
-      transition: transform 0.2s ease;
+
+    button {
+      background: linear-gradient(to right, #a855f7, #ec4899);
+      border: none;
+      border-radius: 8px;
+      padding: 0.75rem 1.5rem;
+      color: white;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
-    .rarity:hover {
+
+    button:hover {
       transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(168, 85, 247, 0.5);
     }
-    .item-card {
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    button:active {
+      transform: scale(0.95);
     }
-    .item-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+
+    .items {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+      gap: 1rem;
+      padding: 1.5rem;
+      scroll-snap-type: x proximity;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      width: 100%;
+      box-sizing: border-box;
     }
-    .weather-box {
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    .stock-category {
+      scroll-behavior: smooth;
+      width: 100%;
+      max-width: none;
+      overflow: visible;
     }
-    .weather-box:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+
+    .item-card img {
+      width: 140px;
+      height: 140px;
+      object-contain;
+      margin: 0 auto;
+    }
+    .item-name, .item-qty {
+      font-size: 1rem;
+      text-align: center;
+    }
+
+    h1 {
+      font-family: 'Orbitron', sans-serif;
+      text-shadow: 0 0 10px rgba(168, 85, 247, 0.8);
+      background: linear-gradient(to right, #d8b4fe, #f472b6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    h2 {
+      font-family: 'Orbitron', sans-serif;
+      color: #d8b4fe;
+      text-shadow: 0 0 8px rgba(168, 85, 247, 0.6);
+    }
+
+    #debug-window {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    #debug-tab {
+      background: linear-gradient(to right, #a855f7, #ec4899);
+      box-shadow: 0 0 12px rgba(168, 85, 247, 0.5);
+      display: none; /* Hidden by default */
+    }
+
+    #particles-js {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: #d8b4fe;
+      font-size: 1rem;
+      text-shadow: 0 0 8px rgba(168, 85, 247, 0.4);
+    }
+
+    footer a {
+      color: #ec4899;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+
+    footer a:hover {
+      color: #f472b6;
+      text-shadow: 0 0 12px rgba(236, 72, 153, 0.6);
     }
   </style>
 </head>
 <body>
-  <h1 class="text-4xl font-bold text-center my-8 text-green-700 animate-fadeIn">Grow A Garden Live Feed 🌻</h1>
+  <div id="particles-js"></div>
+  <main>
+    <h1 class="text-5xl font-bold text-center my-12 animate-pulse">Grow A Garden Live Feed 🌌</h1>
 
-  <div id="status-checker" class="max-w-md mx-auto bg-white/90 p-6 rounded-xl border-4 border-green-500 shadow-xl text-center animate-slideIn">
-    <div id="status-text" class="text-lg font-semibold mb-2">Checking server...</div>
-    <div id="uptime" class="text-sm text-gray-600">Uptime: 0s</div>
-  </div>
+    <div id="status-checker" class="max-w-md mx-auto glass-container p-6 text-center animate-slideIn">
+      <div id="status-text" class="text-lg font-semibold mb-2 text-white">Checking server...</div>
+      <div id="uptime" class="text-sm text-gray-300">Uptime: 0s</div>
+    </div>
 
-  <div id="weather-container" class="max-w-md mx-auto bg-white/90 p-6 rounded-xl border-4 border-green-500 shadow-xl text-center mt-6 weather-box animate-slideIn">
-    <h2 class="text-xl font-semibold text-green-700 mb-4">Current Weather 🌦️</h2>
-    <div id="weather-content" class="text-lg font-medium text-gray-800">Fetching weather...</div>
-  </div>
+    <div id="weather-container" class="max-w-md mx-auto glass-container p-6 text-center mt-6 animate-slideIn">
+      <h2 class="text-xl font-semibold mb-4">Current Weather 🌌</h2>
+      <div id="weather-content" class="text-lg font-medium text-gray-200">Fetching weather...</div>
+    </div>
 
-  <div id="status" class="text-center text-lg font-semibold my-4"></div>
-  <div class="flex justify-center gap-4">
-    <button id="refresh-btn" class="px-6 py-3 bg-amber-500 text-white rounded-lg font-bold hover:bg-amber-600 transition-colors duration-200 shadow-md">🔄 Refresh</button>
-    <button id="subscribe-btn" class="px-6 py-3 bg-green-500 text-white rounded-lg font-bold hover:bg-green-600 transition-colors duration-200 shadow-md">🔔 Subscribe</button>
-  </div>
+    <div id="status" class="text-center text-lg font-semibold my-4 text-white"></div>
+    <div class="flex justify-center gap-4">
+      <button id="refresh-btn" class="px-6 py-3">🔄 Refresh</button>
+      <button id="subscribe-btn" class="px-6 py-3">🔔 Subscribe</button>
+    </div>
 
-  <div id="stock-container" class="max-w-7xl mx-auto p-4"></div>
+    <div id="stock-container" class="max-w-none mx-auto p-4 w-full"></div>
 
-  <div id="debug-tab" class="fixed bottom-6 right-6 bg-green-600 text-white p-4 rounded-full text-xl cursor-pointer shadow-lg hover:bg-green-700 transition-colors duration-200">🪲</div>
-  <div id="debug-window" class="fixed bottom-20 right-6 w-80 max-h-96 bg-white border-2 border-green-500 rounded-xl p-4 overflow-y-auto shadow-xl hidden">
-    <button id="close-debug" class="bg-red-600 text-white px-3 py-1 rounded-lg float-right hover:bg-red-700 transition-colors duration-200">Close</button>
-    <pre id="debug-content" class="text-xs whitespace-pre-wrap break-all">Loading...</pre>
-  </div>
+    <div id="debug-tab" class="fixed bottom-6 right-6 text-white p-4 rounded-full text-xl cursor-pointer hover:scale-110 transition-transform duration-300">🪲</div>
+    <div id="debug-window" class="fixed bottom-20 right-6 w-80 max-h-96 p-4 overflow-y-auto hidden">
+      <button id="close-debug" class="bg-red-600 text-white px-3 py-1 rounded-lg float-right hover:bg-red-700">Close</button>
+      <pre id="debug-content" class="text-xs text-gray-200 whitespace-pre-wrap break-all">Loading...</pre>
+    </div>
+  </main>
+
+  <footer>
+    Made With ❤️ By: Facebook Developer: <a href="https://www.facebook.com/100085861488156" target="_blank" rel="noopener noreferrer">Alex</a>
+  </footer>
 
   <script>
+    // Particles.js configuration
+    particlesJS('particles-js', {
+      particles: {
+        number: { value: 80, density: { enable: true, value_area: 800 } },
+        color: { value: ['#a855f7', '#ec4899', '#d8b4fe'] },
+        shape: { type: 'circle' },
+        opacity: { value: 0.5, random: true },
+        size: { value: 3, random: true },
+        line_linked: { enable: true, distance: 150, color: '#a855f7', opacity: 0.4, width: 1 },
+        move: { enable: true, speed: 4, direction: 'none', random: true, out_mode: 'out' }
+      },
+      interactivity: {
+        detect_on: 'canvas',
+        events: { onhover: { enable: true, mode: 'repulse' }, onclick: { enable: true, mode: 'push' }, resize: true },
+        modes: { repulse: { distance: 100, duration: 0.4 }, push: { particles_nb: 4 } }
+      },
+      retina_detect: true
+    });
+
     const stockURL = 'https://corsproxy.io/?https://api.joshlei.com/v2/growagarden/stock';
     const weatherURL = 'https://corsproxy.io/?https://api.joshlei.com/v2/growagarden/weather';
     const statusEl = document.getElementById('status');
@@ -83,11 +261,31 @@
 
     let latestData = {}, latestWeather = {}, first = true, notified = false, seconds = 0;
 
-    function updateStatus(msg, col = '#2e7d32') {
+    // Triple tap/click detection
+    let clickTimes = [];
+    const maxInterval = 500; // Max time between clicks (ms)
+
+    document.addEventListener('click', (e) => {
+      const now = Date.now();
+      clickTimes.push(now);
+      clickTimes = clickTimes.filter(time => now - time < maxInterval * 2); // Keep clicks within 1s
+
+      if (clickTimes.length >= 3 && (clickTimes[2] - clickTimes[0]) < maxInterval * 2) {
+        if (debugTab.style.display !== 'block') {
+          debugTab.style.display = 'block';
+          gsap.from(debugTab, { opacity: 0, scale: 0, duration: 0.5, ease: 'elastic.out(1, 0.5)' });
+          debugContent.textContent += `\nDebug tab shown at ${new Date().toISOString()}`;
+        }
+        clickTimes = []; // Reset after showing
+      }
+    });
+
+    function updateStatus(msg, col = '#d8b4fe') {
       statusEl.textContent = msg;
       statusTextEl.textContent = msg;
       statusTextEl.style.color = col;
       gsap.to(statusTextEl, { scale: 1.05, duration: 0.2, yoyo: true, repeat: 1 });
+      debugContent.textContent += `\nStatus: ${msg}`;
     }
 
     setInterval(() => {
@@ -98,7 +296,7 @@
     function notify() {
       if (!("Notification" in window) || notified) return;
       if (Notification.permission === "granted") {
-        new Notification("Garden Stock Updated!", { body: "Reload to see latest stock!", icon: container.querySelector('img')?.src });
+        new Notification("Garden Stock Updated!", { body: "Reload to see latest stock!" });
         notified = true;
       }
     }
@@ -127,77 +325,108 @@
       if (activeWeather) {
         const remainingTime = activeWeather.end_duration_unix - Math.floor(Date.now() / 1000);
         weatherContainer.innerHTML = `
-          <div class="text-green-700 font-semibold">${activeWeather.weather_name}</div>
-          <div class="text-sm text-gray-600">Duration: ${formatTime(activeWeather.duration)}</div>
-          <div class="text-sm text-gray-600">Time Left: ${remainingTime > 0 ? formatTime(remainingTime) : 'Ending soon'}</div>
+          <div class="text-white font-semibold">${activeWeather.weather_name}</div>
+          <div class="text-sm text-gray-300">Duration: ${formatTime(activeWeather.duration)}</div>
+          <div class="text-sm text-gray-300">Time Left: ${remainingTime > 0 ? formatTime(remainingTime) : 'Ending soon'}</div>
         `;
       } else {
-        weatherContainer.innerHTML = `<div class="text-gray-600">No active weather event</div>`;
+        weatherContainer.innerHTML = `<div class="text-gray-300">No active weather event</div>`;
       }
       gsap.from(weatherContainer, { opacity: 0, y: 10, duration: 0.5 });
     }
 
     function display(data) {
-      if (!hasChanged(latestData, data)) return;
       latestData = data;
       notified = false;
       container.innerHTML = '';
+      debugContent.textContent += `\nRaw Stock Data: ${JSON.stringify(data, null, 2)}`;
+
       for (const cat in data) {
         const arr = data[cat];
-        if (!Array.isArray(arr)) continue;
+        if (!Array.isArray(arr)) {
+          debugContent.textContent += `\nSkipping non-array category: ${cat}`;
+          continue;
+        }
+        const validItems = arr.filter(it => it && (it.item_id || it.icon || it.quantity !== undefined));
+        debugContent.textContent += `\nCategory ${cat}: ${validItems.length} valid items`;
+        if (validItems.length === 0) continue;
+
         const sec = document.createElement('div');
-        sec.className = 'stock-category mb-6 p-4 bg-white/90 rounded-xl border-4 border-green-500 shadow-lg';
+        sec.className = 'stock-category glass-container mb-6 p-4';
         const h2 = document.createElement('h2');
-        h2.className = 'text-xl font-semibold text-green-700 bg-green-200 p-3 rounded-lg text-center';
+        h2.className = 'text-xl font-semibold text-center mb-4';
         h2.textContent = cat.replace(/_/g, ' ');
         sec.appendChild(h2);
         const items = document.createElement('div');
-        items.className = 'items grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4';
-        arr.forEach((it, index) => {
-          if (it.icon) {
-            const card = document.createElement('div');
-            card.className = 'item-card relative bg-white p-4 rounded-lg border-2 border-amber-400 shadow-md cursor-pointer';
-            const r = rarity(it.quantity || 0);
-            const rb = document.createElement('div');
-            rb.className = `rarity ${r} text-white text-xs font-bold px-2 py-1 rounded mb-2`;
-            rb.textContent = r.toUpperCase();
-            rb.style.backgroundColor = r === 'common' ? '#9e9e9e' : r === 'uncommon' ? '#66bb6a' : r === 'rare' ? '#42a5f5' : '#ab47bc';
-            card.appendChild(rb);
-            const img = document.createElement('img');
-            img.src = it.icon;
-            img.alt = it.display_name || it.item_id;
-            img.className = 'w-24 h-24 object-contain mx-auto';
-            card.appendChild(img);
-            const nm = document.createElement('div');
-            nm.className = 'item-name font-bold mt-2 text-gray-800 text-sm';
-            nm.textContent = it.display_name || it.item_id;
-            card.appendChild(nm);
-            const qty = document.createElement('div');
-            qty.className = 'item-qty text-gray-600 text-sm';
-            qty.textContent = `Qty: ${it.quantity || 0}`;
-            card.appendChild(qty);
+        items.className = 'items';
 
-            if (it.quantity > 0) {
-              const dropdown = document.createElement('div');
-              dropdown.className = 'dropdown absolute top-full left-0 right-0 bg-white border-2 border-green-500 rounded-lg p-4 mt-2 shadow-lg hidden';
-              const buyBtn = document.createElement('button');
-              buyBtn.className = 'w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200';
-              buyBtn.textContent = 'Buy in Roblox';
-              buyBtn.onclick = () => window.open('https://www.roblox.com/games/126884695634066/Grow-a-Garden?gameSetTypeId=100000003&homePageSessionInfo=43809c21-f2d6-45f6-ba36-b9a4f3a73aef&isAd=false&numberOfLoadedTiles=50&page=homePage&placeId=126884695634066&playContext=homePage&position=0&sortPos=3&universeId=7436755782#ropro-quick-play', '_blank');
-              dropdown.appendChild(buyBtn);
-              card.appendChild(dropdown);
+        validItems.forEach((it, index) => {
+          const card = document.createElement('div');
+          card.className = 'item-card';
+          const r = rarity(it.quantity || 0);
+          const rb = document.createElement('div');
+          rb.className = `rarity ${r} text-white text-xs font-bold px-2 py-1 rounded mb-2`;
+          rb.textContent = r.toUpperCase();
+          rb.style.background = r === 'common' ? 'linear-gradient(to right, #6b7280, #4b5563)' :
+                              r === 'uncommon' ? 'linear-gradient(to right, #34d399, #10b981)' :
+                              r === 'rare' ? 'linear-gradient(to right, #3b82f6, #2563eb)' :
+                              'linear-gradient(to right, #a855f7, #ec4899)';
+          card.appendChild(rb);
+          const img = document.createElement('img');
+          img.src = it.icon || 'https://via.placeholder.com/140';
+          img.alt = it.display_name || it.item_id || 'Unknown Item';
+          card.appendChild(img);
+          const nm = document.createElement('div');
+          nm.className = 'item-name font-bold mt-2 text-white';
+          nm.textContent = it.display_name || it.item_id || 'Unknown';
+          card.appendChild(nm);
+          const qty = document.createElement('div');
+          qty.className = 'item-qty text-gray-300';
+          qty.textContent = `Qty: ${it.quantity !== undefined ? it.quantity : 'N/A'}`;
+          card.appendChild(qty);
 
-              card.onclick = () => {
+          if (it.quantity > 0) {
+            const dropdown = document.createElement('div');
+            dropdown.className = 'dropdown absolute top-full left-0 right-0 p-4 mt-2 hidden';
+            const buyBtn = document.createElement('button');
+            buyBtn.className = 'w-full px-4 py-2';
+            buyBtn.textContent = 'Buy in Roblox';
+            buyBtn.onclick = () => window.open('https://www.roblox.com/games/126884695634066/Grow-a-Garden', '_blank');
+            dropdown.appendChild(buyBtn);
+            card.appendChild(dropdown);
+
+            card.onclick = (e) => {
+              if (e.target !== buyBtn) {
                 const isOpen = dropdown.style.display === 'block';
                 dropdown.style.display = isOpen ? 'none' : 'block';
                 gsap.fromTo(dropdown, { scaleY: 0, opacity: 0 }, { scaleY: 1, opacity: 1, duration: 0.3, ease: 'power2.out' });
-              };
-            }
+              }
+            };
+          }
 
-            items.appendChild(card);
-            gsap.from(card, { opacity: 0, y: 20, duration: 0.5, delay: index * 0.1 });
+          items.appendChild(card);
+          gsap.from(card, { opacity: 0, y: 20, duration: 0.5, delay: index * 0.1 });
+        });
+
+        const hammer = new Hammer(items);
+        let velocity = 0;
+        hammer.on('swipeleft', () => {
+          velocity = -300;
+          gsap.to(items, { scrollLeft: '+=300', duration: 0.6, ease: 'power2.out' });
+        });
+        hammer.on('swiperight', () => {
+          velocity = 300;
+          gsap.to(items, { scrollLeft: '-=300', duration: 0.6, ease: 'power2.out' });
+        });
+
+        items.addEventListener('scroll', () => {
+          velocity *= 0.95;
+          if (Math.abs(velocity) > 1) {
+            items.scrollLeft += velocity * 0.1;
+            requestAnimationFrame(() => items.dispatchEvent(new Event('scroll')));
           }
         });
+
         sec.appendChild(items);
         container.appendChild(sec);
         gsap.from(sec, { opacity: 0, y: 30, duration: 0.7 });
@@ -208,37 +437,63 @@
 
     async function fetchWeather() {
       try {
+        debugContent.textContent += `\nFetching weather at ${new Date().toISOString()}`;
         const response = await fetch(weatherURL);
         const data = await response.json();
         debugContent.textContent += `\nWeather Data: ${JSON.stringify(data, null, 2)}`;
         displayWeather(data);
       } catch (e) {
-        console.error(e);
-        weatherContainer.innerHTML = `<div class="text-red-600">Failed to fetch weather ❌</div>`;
+        console.error('Weather fetch error:', e);
+        weatherContainer.innerHTML = `<div class="text-red-400">Failed to fetch weather ❌</div>`;
         debugContent.textContent += `\nWeather Error: ${e.message}`;
       }
     }
 
-    async function fetchStock() {
+    async function fetchStock(attempt = 1, maxAttempts = 3) {
       try {
-        updateStatus("Fetching stock...", "#2e7d32");
+        debugContent.textContent += `\nFetching stock (attempt ${attempt}/${maxAttempts}) at ${new Date().toISOString()}`;
+        updateStatus("Fetching stock...", "#d8b4fe");
         const response = await fetch(stockURL);
+        if (!response.ok && attempt < maxAttempts) {
+          debugContent.textContent += `\nStock fetch failed (status ${response.status}), retrying...`;
+          return setTimeout(() => fetchStock(attempt + 1, maxAttempts), 2000);
+        }
         const j = await response.json();
-        debugContent.textContent = JSON.stringify(j, null, 2);
+        debugContent.textContent += `\nStock Data: ${JSON.stringify(j, null, 2)}`;
         display(j);
-        updateStatus("Stock updated ✅", "#00c853");
+        updateStatus("Stock updated ✅", "#a855f7");
       } catch (e) {
-        console.error(e);
-        updateStatus("Failed to fetch ❌", "#c62828");
-        debugContent.textContent = `Error: ${e.message}`;
+        console.error('Stock fetch error:', e);
+        if (attempt < maxAttempts) {
+          debugContent.textContent += `\nStock fetch error: ${e.message}, retrying...`;
+          return setTimeout(() => fetchStock(attempt + 1, maxAttempts), 2000);
+        }
+        updateStatus("Failed to fetch ❌", "#f87171");
+        debugContent.textContent += `\nStock Error: ${e.message}`;
       }
     }
 
-    fetchStock();
-    fetchWeather();
-    setInterval(fetchStock, 15000);
-    setInterval(fetchWeather, 15000);
-    refreshBtn.onclick = () => location.reload();
+    document.addEventListener('DOMContentLoaded', () => {
+      latestData = {};
+      fetchStock();
+      fetchWeather();
+    });
+
+    setInterval(() => {
+      fetchStock();
+      fetchWeather();
+    }, 15000);
+
+    window.addEventListener('resize', () => {
+      if (latestData && Object.keys(latestData).length) {
+        display(latestData);
+      }
+    });
+
+    refreshBtn.onclick = () => {
+      latestData = {};
+      location.reload();
+    };
     subscribeBtn.onclick = () => {
       Notification.requestPermission().then(() => {
         subscribeBtn.textContent = Notification.permission === "granted" ? "🔔 Subscribed" : Notification.permission === "denied" ? "🔕 Denied" : "🔔 Subscribe";
@@ -254,9 +509,8 @@
       gsap.to(debugWindow, { x: 20, opacity: 0, duration: 0.3, onComplete: () => debugWindow.style.display = 'none' });
     };
 
-    // GSAP animations for initial load
-    gsap.from('.navbar', { y: -50, opacity: 0, duration: 0.8 });
     gsap.from('h1', { opacity: 0, scale: 0.8, duration: 1 });
+    gsap.from('.glass-container', { opacity: 0, y: 30, duration: 0.7, stagger: 0.2 });
   </script>
 </body>
 </html>

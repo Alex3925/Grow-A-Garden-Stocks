@@ -7,7 +7,6 @@
   <meta name="theme-color" content="#6b21a8" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
@@ -30,7 +29,6 @@
       flex-direction: column;
     }
 
-    /* Glassmorphic container */
     .glass-container {
       background: rgba(255, 255, 255, 0.1);
       backdrop-filter: blur(12px);
@@ -45,7 +43,6 @@
       box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
     }
 
-    /* Item card styles */
     .item-card {
       background: rgba(255, 255, 255, 0.08);
       backdrop-filter: blur(8px);
@@ -55,28 +52,13 @@
       position: relative;
       min-width: 0;
       padding: 1.5rem;
-      transition: transform 0.4s ease, box-shadow 0.4s ease;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transform: none; /* Reset tilt */
     }
 
     .item-card:hover {
-      transform: translateY(-8px) scale(1.02);
+      transform: translateY(-8px);
       box-shadow: 0 12px 24px rgba(167, 139, 250, 0.4);
-    }
-
-    .item-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(45deg, transparent, rgba(168, 85, 247, 0.2), transparent);
-      opacity: 0;
-      transition: opacity 0.4s ease;
-    }
-
-    .item-card:hover::before {
-      opacity: 1;
     }
 
     .rarity {
@@ -100,7 +82,6 @@
       transform-origin: top;
     }
 
-    /* Button styles */
     button {
       background: linear-gradient(to right, #a855f7, #ec4899);
       border: none;
@@ -122,7 +103,6 @@
       transform: scale(0.95);
     }
 
-    /* Desktop grid layout for all devices */
     .items {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
@@ -139,6 +119,7 @@
       scroll-behavior: smooth;
       width: 100%;
       max-width: none;
+      overflow: visible;
     }
 
     .item-card img {
@@ -152,7 +133,6 @@
       text-align: center;
     }
 
-    /* Typography */
     h1 {
       font-family: 'Orbitron', sans-serif;
       text-shadow: 0 0 10px rgba(168, 85, 247, 0.8);
@@ -167,7 +147,6 @@
       text-shadow: 0 0 8px rgba(168, 85, 247, 0.6);
     }
 
-    /* Debug window */
     #debug-window {
       background: rgba(255, 255, 255, 0.1);
       backdrop-filter: blur(12px);
@@ -181,7 +160,6 @@
       box-shadow: 0 0 12px rgba(168, 85, 247, 0.5);
     }
 
-    /* Particle container */
     #particles-js {
       position: fixed;
       top: 0;
@@ -191,7 +169,6 @@
       z-index: -1;
     }
 
-    /* Footer */
     footer {
       text-align: center;
       padding: 2rem;
@@ -288,6 +265,7 @@
       statusTextEl.textContent = msg;
       statusTextEl.style.color = col;
       gsap.to(statusTextEl, { scale: 1.05, duration: 0.2, yoyo: true, repeat: 1 });
+      debugContent.textContent += `\nStatus: ${msg}`;
     }
 
     setInterval(() => {
@@ -338,8 +316,7 @@
     }
 
     function display(data) {
-      if (!hasChanged(latestData, data)) return;
-      latestData = data;
+      latestData = data; // Always update cache
       notified = false;
       container.innerHTML = '';
       debugContent.textContent += `\nRaw Stock Data: ${JSON.stringify(data, null, 2)}`;
@@ -350,7 +327,7 @@
           debugContent.textContent += `\nSkipping non-array category: ${cat}`;
           continue;
         }
-        const validItems = arr.filter(it => it && (it.icon || it.quantity !== undefined));
+        const validItems = arr.filter(it => it && (it.item_id || it.icon || it.quantity !== undefined));
         debugContent.textContent += `\nCategory ${cat}: ${validItems.length} valid items`;
         if (validItems.length === 0) continue;
 
@@ -366,9 +343,6 @@
         validItems.forEach((it, index) => {
           const card = document.createElement('div');
           card.className = 'item-card';
-          card.setAttribute('data-tilt', '');
-          card.setAttribute('data-tilt-glare', 'true');
-          card.setAttribute('data-tilt-max-glare', '0.3');
           const r = rarity(it.quantity || 0);
           const rb = document.createElement('div');
           rb.className = `rarity ${r} text-white text-xs font-bold px-2 py-1 rounded mb-2`;
@@ -397,7 +371,7 @@
             const buyBtn = document.createElement('button');
             buyBtn.className = 'w-full px-4 py-2';
             buyBtn.textContent = 'Buy in Roblox';
-            buyBtn.onclick = () => window.open('https://www.roblox.com/games/126884695634066/Grow-a-Garden?gameSetTypeId=100000003&homePageSessionInfo=43809c21-f2d6-45f6-ba36-b9a4f3a73aef&isAd=false&numberOfLoadedTiles=50&page=homePage&placeId=126884695634066&playContext=homePage&position=0&sortPos=3&universeId=7436755782#ropro-quick-play', '_blank');
+            buyBtn.onclick = () => window.open('https://www.roblox.com/games/126884695634066/Grow-a-Garden', '_blank');
             dropdown.appendChild(buyBtn);
             card.appendChild(dropdown);
 
@@ -412,26 +386,26 @@
 
           items.appendChild(card);
           gsap.from(card, { opacity: 0, y: 20, duration: 0.5, delay: index * 0.1 });
+        });
 
-          // Swipe support
-          const hammer = new Hammer(items);
-          let velocity = 0;
-          hammer.on('swipeleft', () => {
-            velocity = -300;
-            gsap.to(items, { scrollLeft: '+=300', duration: 0.6, ease: 'power2.out' });
-          });
-          hammer.on('swiperight', () => {
-            velocity = 300;
-            gsap.to(items, { scrollLeft: '-=300', duration: 0.6, ease: 'power2.out' });
-          });
+        // Single swipe listener per items div
+        const hammer = new Hammer(items);
+        let velocity = 0;
+        hammer.on('swipeleft', () => {
+          velocity = -300;
+          gsap.to(items, { scrollLeft: '+=300', duration: 0.6, ease: 'power2.out' });
+        });
+        hammer.on('swiperight', () => {
+          velocity = 300;
+          gsap.to(items, { scrollLeft: '-=300', duration: 0.6, ease: 'power2.out' });
+        });
 
-          items.addEventListener('scroll', () => {
-            velocity *= 0.95;
-            if (Math.abs(velocity) > 1) {
-              items.scrollLeft += velocity * 0.1;
-              requestAnimationFrame(() => items.dispatchEvent(new Event('scroll')));
-            }
-          });
+        items.addEventListener('scroll', () => {
+          velocity *= 0.95;
+          if (Math.abs(velocity) > 1) {
+            items.scrollLeft += velocity * 0.1;
+            requestAnimationFrame(() => items.dispatchEvent(new Event('scroll')));
+          }
         });
 
         sec.appendChild(items);
@@ -440,52 +414,57 @@
       }
       if (!first) notify();
       else first = false;
-
-      VanillaTilt.init(document.querySelectorAll('.item-card'), {
-        max: 15,
-        speed: 400,
-        glare: true,
-        'max-glare': 0.3
-      });
     }
 
     async function fetchWeather() {
       try {
+        debugContent.textContent += `\nFetching weather at ${new Date().toISOString()}`;
         const response = await fetch(weatherURL);
         const data = await response.json();
         debugContent.textContent += `\nWeather Data: ${JSON.stringify(data, null, 2)}`;
         displayWeather(data);
       } catch (e) {
-        console.error(e);
+        console.error('Weather fetch error:', e);
         weatherContainer.innerHTML = `<div class="text-red-400">Failed to fetch weather ❌</div>`;
         debugContent.textContent += `\nWeather Error: ${e.message}`;
       }
     }
 
-    async function fetchStock() {
+    async function fetchStock(attempt = 1, maxAttempts = 3) {
       try {
+        debugContent.textContent += `\nFetching stock (attempt ${attempt}/${maxAttempts}) at ${new Date().toISOString()}`;
         updateStatus("Fetching stock...", "#d8b4fe");
         const response = await fetch(stockURL);
+        if (!response.ok && attempt < maxAttempts) {
+          debugContent.textContent += `\nStock fetch failed (status ${response.status}), retrying...`;
+          return setTimeout(() => fetchStock(attempt + 1, maxAttempts), 2000);
+        }
         const j = await response.json();
-        debugContent.textContent = JSON.stringify(j, null, 2);
+        debugContent.textContent += `\nStock Data: ${JSON.stringify(j, null, 2)}`;
         display(j);
         updateStatus("Stock updated ✅", "#a855f7");
       } catch (e) {
-        console.error(e);
+        console.error('Stock fetch error:', e);
+        if (attempt < maxAttempts) {
+          debugContent.textContent += `\nStock fetch error: ${e.message}, retrying...`;
+          return setTimeout(() => fetchStock(attempt + 1, maxAttempts), 2000);
+        }
         updateStatus("Failed to fetch ❌", "#f87171");
-        debugContent.textContent = `Error: ${e.message}`;
+        debugContent.textContent += `\nStock Error: ${e.message}`;
       }
     }
 
+    // Single initial fetch on load
     document.addEventListener('DOMContentLoaded', () => {
+      latestData = {}; // Clear cache
       fetchStock();
       fetchWeather();
     });
 
-    fetchStock();
-    fetchWeather();
-    setInterval(fetchStock, 15000);
-    setInterval(fetchWeather, 15000);
+    setInterval(() => {
+      fetchStock();
+      fetchWeather();
+    }, 15000);
 
     window.addEventListener('resize', () => {
       if (latestData && Object.keys(latestData).length) {
@@ -493,7 +472,10 @@
       }
     });
 
-    refreshBtn.onclick = () => location.reload();
+    refreshBtn.onclick = () => {
+      latestData = {}; // Clear cache on manual refresh
+      location.reload();
+    };
     subscribeBtn.onclick = () => {
       Notification.requestPermission().then(() => {
         subscribeBtn.textContent = Notification.permission === "granted" ? "🔔 Subscribed" : Notification.permission === "denied" ? "🔕 Denied" : "🔔 Subscribe";

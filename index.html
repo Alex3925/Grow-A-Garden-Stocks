@@ -296,7 +296,7 @@
     }
 
     #calculator-content select {
-      height: 100px; /* Show more options */
+      height: 100px;
     }
 
     #calculator-content select option {
@@ -486,6 +486,7 @@
     };
 
     let latestData = {}, latestWeather = {}, first = true, notified = false, seconds = 0, isAllView = false;
+    let lastStockHash = '', lastWeatherHash = '';
 
     // Triple tap/click detection
     let clickTimes = [];
@@ -536,14 +537,18 @@
       }
     }
 
-    function hasChanged(o, n) {
-      return JSON.stringify(o) !== JSON.stringify(n);
+    function hasChanged(o, n, hashKey) {
+      const newHash = JSON.stringify(n);
+      if (hashKey === 'stock' && newHash === lastStockHash) return false;
+      if (hashKey === 'weather' && newHash === lastWeatherHash) return false;
+      if (hashKey === 'stock') lastStockHash = newHash;
+      if (hashKey === 'weather') lastWeatherHash = newHash;
+      return true;
     }
 
     function getRarity(item) {
       const seed = seedData[item.display_name] || seedData[item.item_id];
       if (seed) return seed.rarity;
-      // Fallback for non-seed items or unknown seeds
       const qty = item.quantity || 0;
       if (qty >= 50) return 'common';
       if (qty >= 20) return 'uncommon';
@@ -557,13 +562,17 @@
       return `${minutes}m ${secs}s`;
     }
 
+    function normalizeName(name) {
+      return name?.trim().replace(/\s+/g, ' ');
+    }
+
     function getItemId(displayName) {
       return displayName?.toLowerCase().replace(/ /g, "_") || '';
     }
 
     async function getItemIcon(itemId, fallbackIcon) {
       try {
-        const response = await fetch(`${imageURL}${itemId}`);
+        const response = await fetchWithTimeout(`${imageURL}${itemId}`, 5000);
         if (response.ok) return response.url;
         return fallbackIcon || 'https://via.placeholder.com/140';
       } catch {
@@ -573,7 +582,7 @@
 
     async function getItemInfo(itemId) {
       try {
-        const response = await fetch(`${itemInfoURL}${itemId}`);
+        const response = await fetchWithTimeout(`${itemInfoURL}${itemId}`, 5000);
         if (response.ok) return await response.json();
         return null;
       } catch {
@@ -581,8 +590,21 @@
       }
     }
 
+    async function fetchWithTimeout(url, timeout) {
+      const controller = new AbortController();
+      const id = setTimeout(() => controller.abort(), timeout);
+      try {
+        const response = await fetch(url, { signal: controller.signal });
+        clearTimeout(id);
+        return response;
+      } catch (e) {
+        clearTimeout(id);
+        throw e;
+      }
+    }
+
     function displayWeather(data) {
-      if (!hasChanged(latestWeather, data)) return;
+      if (!hasChanged(latestWeather, data, 'weather')) return;
       latestWeather = data;
       debugContent.textContent += `\nWeather Data: ${JSON.stringify(data, null, 2)}`;
       const activeWeather = data.weather.find(w => w.active) || null;
@@ -600,7 +622,7 @@
     }
 
     async function display(data) {
-      if (!hasChanged(latestData, data)) return;
+      if (!hasChanged(latestData, data, 'stock')) return;
       latestData = data;
       notified = false;
       container.innerHTML = '';
@@ -654,22 +676,17 @@
             qty.textContent = `Qty: ${it.quantity !== undefined ? it.quantity : 'N/A'}`;
             card.appendChild(qty);
 
-            if (cat.toLowerCase() === 'seeds' && seedData[it.display_name]) {
+            if (cat.toLowerCase().includes('seed') && seedData[normalizeName(it.display_name)]) {
               const priceTag = document.createElement('div');
               priceTag.className = 'price-tag';
-              priceTag.textContent = `${seedData[it.display_name].cost.toLocaleString()} Sheckles`;
+              priceTag.textContent = `${seedData[normalizeName(it.display_name)].cost.toLocaleString()} Sheckles`;
               card.appendChild(priceTag);
+              debugContent.textContent += `\nPrice tag added for ${it.display_name}: ${priceTag.textContent}`;
             }
 
             if (isAllView || it.quantity > 0) {
               const dropdown = document.createElement('div');
               dropdown.className = 'dropdown absolute top-full left-0 right-0 p-4 mt-2 hidden';
-              const buyBtn = document.createElement('button');
-              buyBtn.className = 'w-full px-4 py-2';
-              buyBtn.textContent = 'Buy in Roblox';
-              buyBtn.onclick = () => window.open('https://www.roblox.com/games/126884695634066/Grow-a-Garden', '_blank');
-              dropdown.appendChild(buyBtn);
-
               const itemId = it.item_id || getItemId(it.display_name);
               if (itemId) {
                 const infoDiv = document.createElement('div');
@@ -690,13 +707,11 @@
               }
 
               card.appendChild(dropdown);
-              card.onclick = (e) => {
-                if (e.target !== buyBtn) {
-                  document.querySelectorAll('.dropdown').forEach(d => d.style.display = 'none');
-                  const isOpen = dropdown.style.display === 'block';
-                  dropdown.style.display = isOpen ? 'none' : 'block';
-                  gsap.fromTo(dropdown, { scaleY: 0, opacity: 0 }, { scaleY: 1, opacity: 1, duration: 0.3, ease: 'power2.out' });
-                }
+              card.onclick = () => {
+                document.querySelectorAll('.dropdown').forEach(d => d.style.display = 'none');
+                const isOpen = dropdown.style.display === 'block';
+                dropdown.style.display = isOpen ? 'none' : 'block';
+                gsap.fromTo(dropdown, { scaleY: 0, opacity: 0 }, { scaleY: 1, opacity: 1, duration: 0.3, ease: 'power2.out' });
               };
             }
 
@@ -735,7 +750,7 @@
     async function fetchWeather() {
       try {
         debugContent.textContent += `\nFetching weather at ${new Date().toISOString()}`;
-        const response = await fetch(weatherURL);
+        const response = await fetchWithTimeout(weatherURL, 5000);
         const data = await response.json();
         displayWeather(data);
       } catch (e) {
@@ -745,15 +760,15 @@
       }
     }
 
-    async function fetchData(attempt = 1, maxAttempts = 3) {
+    async function fetchData(attempt = 1, maxAttempts = 2) {
       const url = isAllView ? itemInfoURL : stockURL;
       try {
         debugContent.textContent += `\nFetching ${isAllView ? 'all items' : 'stock'} (attempt ${attempt}/${maxAttempts}) at ${new Date().toISOString()}`;
         updateStatus(`Fetching ${isAllView ? 'all items' : 'stock'}...`, '#d8b4fe');
-        const response = await fetch(url);
+        const response = await fetchWithTimeout(url, 5000);
         if (!response.ok && attempt < maxAttempts) {
           debugContent.textContent += `\nFetch failed (status ${response.status}), retrying...`;
-          return setTimeout(() => fetchData(attempt + 1, maxAttempts), 2000);
+          return setTimeout(() => fetchData(attempt + 1, maxAttempts), 1000);
         }
         const j = await response.json();
         display(j);
@@ -762,11 +777,15 @@
         console.error('Fetch error:', e);
         if (attempt < maxAttempts) {
           debugContent.textContent += `\nFetch error: ${e.message}, retrying...`;
-          return setTimeout(() => fetchData(attempt + 1, maxAttempts), 2000);
+          return setTimeout(() => fetchData(attempt + 1, maxAttempts), 1000);
         }
         updateStatus(`Failed to fetch ${isAllView ? 'items' : 'stock'} ❌`, '#f87171');
         debugContent.textContent += `\nFetch Error: ${e.message}`;
       }
+    }
+
+    async function fetchAll() {
+      await Promise.all([fetchData(), fetchWeather()]);
     }
 
     async function calculateFruit(e) {
@@ -784,7 +803,7 @@
         if (variant) params.append('Variant', variant);
         if (mutations.length) params.append('Mutation', mutations.join(','));
         debugContent.textContent += `\nCalculating with params: ${params.toString()}`;
-        const response = await fetch(`${calculateURL}?${params}`);
+        const response = await fetchWithTimeout(`${calculateURL}?${params}`, 5000);
         const data = await response.json();
         calculatorResult.textContent = `Calculated Value: ${data.value || 'N/A'}${mutations.length ? ` (Mutations: ${mutations.join(', ')})` : ''}`;
         debugContent.textContent += `\nFruit Calculation: ${JSON.stringify(data, null, 2)}`;
@@ -796,14 +815,10 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       latestData = {};
-      fetchData();
-      fetchWeather();
+      fetchAll();
     });
 
-    setInterval(() => {
-      fetchData();
-      fetchWeather();
-    }, 15000);
+    setInterval(fetchAll, 10000);
 
     window.addEventListener('resize', () => {
       if (latestData && Object.keys(latestData).length) {
@@ -811,7 +826,10 @@
       }
     });
 
-    refreshBtn.onclick = () => location.reload();
+    refreshBtn.onclick = () => {
+      fetchAll();
+      updateStatus('Manual refresh triggered 🔄', '#a855f7');
+    };
     subscribeBtn.onclick = () => {
       Notification.requestPermission().then(() => {
         subscribeBtn.textContent = Notification.permission === "granted" ? "🔔 Subscribed" : Notification.permission === "denied" ? "🔕 Denied" : "🔔 Subscribe";

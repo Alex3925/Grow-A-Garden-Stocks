@@ -75,6 +75,25 @@
       transform: scale(1.1);
     }
 
+    .price-tag {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      padding: 0.3rem 0.6rem;
+      color: #d8b4fe;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: transform 0.2s ease;
+    }
+
+    .price-tag:hover {
+      transform: scale(1.05);
+    }
+
     .dropdown {
       background: rgba(255, 255, 255, 0.12);
       backdrop-filter: blur(8px);
@@ -276,6 +295,10 @@
       font-size: 1rem;
     }
 
+    #calculator-content select {
+      height: 100px; /* Show more options */
+    }
+
     #calculator-content select option {
       background: #4c1d95;
       color: white;
@@ -286,6 +309,12 @@
       font-weight: 600;
       text-align: center;
       margin-top: 1rem;
+    }
+
+    .form-note {
+      color: #d8b4fe;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
     }
   </style>
 </head>
@@ -341,13 +370,33 @@
             <option value="">Select Variant (Optional)</option>
             <option value="Rainbow">Rainbow</option>
             <option value="Golden">Golden</option>
-            <!-- Add more variants as needed -->
           </select>
-          <select id="calc-mutation" multiple>
+          <div class="form-note">Hold Ctrl (Cmd on Mac) to select multiple mutations</div>
+          <select id="calc-mutation" multiple size="8">
             <option value="">Select Mutation(s) (Optional)</option>
-            <option value="Disco">Disco</option>
-            <option value="Bloodmoon">Bloodmoon</option>
-            <!-- Add more mutations as needed -->
+            <option value="Gold">Gold (20x)</option>
+            <option value="Rainbow">Rainbow (50x)</option>
+            <option value="Wet">Wet (2x)</option>
+            <option value="Shocked">Shocked (100x)</option>
+            <option value="Chilled">Chilled (2x)</option>
+            <option value="Frozen">Frozen (10x)</option>
+            <option value="Moonlit">Moonlit (2x)</option>
+            <option value="Bloodlit">Bloodlit (4x)</option>
+            <option value="Celestial">Celestial (120x)</option>
+            <option value="Zombified">Zombified (25x)</option>
+            <option value="Disco">Disco (125x)</option>
+            <option value="Pollinated">Pollinated (3x)</option>
+            <option value="HoneyGlazed">HoneyGlazed (5x)</option>
+            <option value="Voidtouched">Voidtouched (135x)</option>
+            <option value="Twisted">Twisted (30x)</option>
+            <option value="Plasma">Plasma (5x)</option>
+            <option value="Heavenly">Heavenly (5x)</option>
+            <option value="Choc">Choc (2x)</option>
+            <option value="Meteoric">Meteoric (125x)</option>
+            <option value="Burnt">Burnt (4x)</option>
+            <option value="Cooked">Cooked (25x)</option>
+            <option value="Molten">Molten (25x)</option>
+            <option value="Dawnbound">Dawnbound (150x)</option>
           </select>
           <button type="submit" class="w-full mt-4">Calculate</button>
         </form>
@@ -411,6 +460,31 @@
     const calculatorForm = document.getElementById('calculator-form');
     const calculatorResult = document.getElementById('calculator-result');
 
+    const seedData = {
+      'Carrot': { rarity: 'common', cost: 10, harvests: 'Single' },
+      'Strawberry': { rarity: 'common', cost: 50, harvests: 'Multiple' },
+      'Blueberry': { rarity: 'uncommon', cost: 400, harvests: 'Multiple' },
+      'Orange Tulip': { rarity: 'uncommon', cost: 600, harvests: 'Single' },
+      'Tomato': { rarity: 'rare', cost: 800, harvests: 'Multiple' },
+      'Corn': { rarity: 'rare', cost: 1300, harvests: 'Multiple' },
+      'Daffodil': { rarity: 'rare', cost: 1000, harvests: 'Single' },
+      'Watermelon': { rarity: 'legendary', cost: 2500, harvests: 'Single' },
+      'Pumpkin': { rarity: 'legendary', cost: 3000, harvests: 'Single' },
+      'Apple': { rarity: 'legendary', cost: 3250, harvests: 'Multiple' },
+      'Bamboo': { rarity: 'legendary', cost: 4000, harvests: 'Single' },
+      'Coconut': { rarity: 'mythical', cost: 6000, harvests: 'Multiple' },
+      'Cactus': { rarity: 'mythical', cost: 15000, harvests: 'Multiple' },
+      'Dragon Fruit': { rarity: 'mythical', cost: 50000, harvests: 'Multiple' },
+      'Mango': { rarity: 'mythical', cost: 100000, harvests: 'Multiple' },
+      'Grape': { rarity: 'divine', cost: 850000, harvests: 'Multiple' },
+      'Mushroom': { rarity: 'divine', cost: 150000, harvests: 'Single' },
+      'Pepper': { rarity: 'divine', cost: 1000000, harvests: 'Multiple' },
+      'Cacao': { rarity: 'divine', cost: 2500000, harvests: 'Multiple' },
+      'Beanstalk': { rarity: 'prismatic', cost: 10000000, harvests: 'Multiple' },
+      'Ember Lily': { rarity: 'prismatic', cost: 15000000, harvests: 'Multiple' },
+      'Sugar Apple': { rarity: 'prismatic', cost: 20000000, harvests: 'Multiple' }
+    };
+
     let latestData = {}, latestWeather = {}, first = true, notified = false, seconds = 0, isAllView = false;
 
     // Triple tap/click detection
@@ -466,10 +540,14 @@
       return JSON.stringify(o) !== JSON.stringify(n);
     }
 
-    function rarity(q) {
-      if (q >= 50) return 'common';
-      if (q >= 20) return 'uncommon';
-      if (q >= 5) return 'rare';
+    function getRarity(item) {
+      const seed = seedData[item.display_name] || seedData[item.item_id];
+      if (seed) return seed.rarity;
+      // Fallback for non-seed items or unknown seeds
+      const qty = item.quantity || 0;
+      if (qty >= 50) return 'common';
+      if (qty >= 20) return 'uncommon';
+      if (qty >= 5) return 'rare';
       return 'epic';
     }
 
@@ -527,6 +605,7 @@
       notified = false;
       container.innerHTML = '';
       debugContent.textContent += `\nRaw Data: ${JSON.stringify(data, null, 2)}`;
+      debugContent.textContent += `\nSeed Data Mapping: ${JSON.stringify(seedData, null, 2)}`;
 
       for (const cat in data) {
         const arr = data[cat];
@@ -550,13 +629,16 @@
           if (!isAllView || it.item_id || it.icon) {
             const card = document.createElement('div');
             card.className = 'item-card';
-            const r = rarity(it.quantity || 0);
+            const r = getRarity(it);
             const rb = document.createElement('div');
             rb.className = `rarity ${r} text-white text-xs font-bold px-2 py-1 rounded mb-2`;
             rb.textContent = r.toUpperCase();
             rb.style.background = r === 'common' ? 'linear-gradient(to right, #6b7280, #4b5563)' :
                                 r === 'uncommon' ? 'linear-gradient(to right, #34d399, #10b981)' :
                                 r === 'rare' ? 'linear-gradient(to right, #3b82f6, #2563eb)' :
+                                r === 'legendary' ? 'linear-gradient(to right, #facc15, #eab308)' :
+                                r === 'mythical' ? 'linear-gradient(to right, #ec4899, #db2777)' :
+                                r === 'divine' ? 'linear-gradient(to right, #22d3ee, #06b6d4)' :
                                 'linear-gradient(to right, #a855f7, #ec4899)';
             card.appendChild(rb);
             const img = document.createElement('img');
@@ -571,6 +653,13 @@
             qty.className = 'item-qty text-gray-300';
             qty.textContent = `Qty: ${it.quantity !== undefined ? it.quantity : 'N/A'}`;
             card.appendChild(qty);
+
+            if (cat.toLowerCase() === 'seeds' && seedData[it.display_name]) {
+              const priceTag = document.createElement('div');
+              priceTag.className = 'price-tag';
+              priceTag.textContent = `${seedData[it.display_name].cost.toLocaleString()} Sheckles`;
+              card.appendChild(priceTag);
+            }
 
             if (isAllView || it.quantity > 0) {
               const dropdown = document.createElement('div');
@@ -591,7 +680,6 @@
                 getItemInfo(itemId).then(info => {
                   if (info) {
                     infoDiv.innerHTML = `
-                      <div><strong>Price:</strong> ${info.price || 'N/A'} ${info.currency || ''}</div>
                       <div><strong>Description:</strong> ${info.description || 'No description'}</div>
                       <div><strong>Last Seen:</strong> ${info.last_seen || 'N/A'}</div>
                     `;
@@ -695,9 +783,10 @@
         const params = new URLSearchParams({ Name: name, Weight: weight });
         if (variant) params.append('Variant', variant);
         if (mutations.length) params.append('Mutation', mutations.join(','));
+        debugContent.textContent += `\nCalculating with params: ${params.toString()}`;
         const response = await fetch(`${calculateURL}?${params}`);
         const data = await response.json();
-        calculatorResult.textContent = `Calculated Value: ${data.value || 'N/A'}`;
+        calculatorResult.textContent = `Calculated Value: ${data.value || 'N/A'}${mutations.length ? ` (Mutations: ${mutations.join(', ')})` : ''}`;
         debugContent.textContent += `\nFruit Calculation: ${JSON.stringify(data, null, 2)}`;
       } catch (e) {
         calculatorResult.textContent = 'Error calculating value';

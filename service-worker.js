@@ -8,20 +8,16 @@ self.addEventListener('activate', event => {
 
 self.addEventListener('push', event => {
   const data = event.data?.json() || {};
-
   const title = data.title || 'Grow A Garden';
   const options = {
     body: data.body || 'Stock has been updated!',
     icon: 'carrot.png',
     badge: 'carrot.png'
   };
-
-  event.waitUntil(
-    self.registration.showNotification(title, options)
-  );
+  event.waitUntil(self.registration.showNotification(title, options));
 });
 
 self.addEventListener('notificationclick', event => {
   event.notification.close();
-  event.waitUntil(clients.openWindow('./index.html'));
+  event.waitUntil(clients.openWindow('./growagarden.html'));
 });
